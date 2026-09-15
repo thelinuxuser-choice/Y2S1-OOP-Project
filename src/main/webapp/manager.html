@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Operations — parkED</title>
+  <link rel="stylesheet" href="css/app.css?v=10" />
+  <script src="js/loader.js?v=9"></script>
+</head>
+<body>
+  <div class="staff-shell">
+    <header class="top-simple" data-reveal>
+      <div class="brand">park<em>ED</em> <span class="text-muted text-sm" style="font-weight:600"> · Ops</span></div>
+      <div class="row">
+        <span class="text-sm text-muted" id="who"></span>
+        <button class="btn btn-outline btn-sm" type="button" onclick="logout()">Sign out</button>
+      </div>
+    </header>
+
+    <div class="staff-main">
+      <div class="page-title" data-reveal>
+        <div class="badge badge-ok" style="margin-bottom:0.45rem">MANAGER</div>
+        <h2>Facility operations</h2>
+        <p class="text-muted text-sm">Occupancy, revenue, feedback, and inquiry queue.</p>
+      </div>
+      <div id="msg" hidden></div>
+
+      <div class="grid-2">
+        <div class="card" data-reveal>
+          <div class="card-header row" style="justify-content:space-between">
+            <div>
+              <h2 class="card-title">Occupancy</h2>
+              <p class="text-muted text-sm">Live bay counts</p>
+            </div>
+            <button class="btn btn-accent btn-sm" id="btnOcc" type="button">Refresh</button>
+          </div>
+          <div id="occ" class="stack"></div>
+        </div>
+        <div class="card dark" data-reveal>
+          <div class="card-header">
+            <h2 class="card-title" style="color:#fff">Ratings</h2>
+            <p class="text-sm" style="color:#a1a1aa">Facility summary</p>
+          </div>
+          <div id="sum" class="text-sm" style="margin-bottom:1rem;color:#d4ff00;font-weight:700"></div>
+          <div id="fb" class="stack text-sm" style="color:#a1a1aa"></div>
+        </div>
+      </div>
+
+      <div class="card" data-reveal>
+        <div class="card-header">
+          <h2 class="card-title">Revenue</h2>
+          <p class="text-muted text-sm">Paid invoices</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Invoice</th><th>Reservation</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody id="rev"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" data-reveal>
+        <div class="card-header">
+          <h2 class="card-title">Inquiries</h2>
+          <p class="text-muted text-sm">State transitions and replies</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Ref</th><th>Subject</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="inq"></tbody>
+          </table>
+        </div>
+        <div class="grid-2" style="margin-top:1.25rem">
+          <div class="field">
+            <label for="replyId">Reply to inquiry ID</label>
+            <input id="replyId" type="number" />
+          </div>
+          <div class="field">
+            <label for="replyMsg">Message</label>
+            <textarea id="replyMsg"></textarea>
+          </div>
+        </div>
+        <button class="btn btn-accent" id="btnReply" type="button">Send reply</button>
+      </div>
+
+      <div class="card" data-reveal>
+        <div class="card-header">
+          <h2 class="card-title">Facility &amp; slots (M.5)</h2>
+          <p class="text-muted text-sm">Create bays or set maintenance / rates</p>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="field"><label for="newFloorId">Floor ID</label><input id="newFloorId" type="number" value="1" /></div>
+            <div class="field"><label for="newSlotCode">Slot code</label><input id="newSlotCode" placeholder="G-C1" /></div>
+            <div class="field">
+              <label for="newSlotType">Type</label>
+              <select id="newSlotType"><option>STANDARD</option><option>EV</option><option>ACCESSIBLE</option><option>COVERED</option></select>
+            </div>
+            <div class="field"><label for="newSlotRate">Base rate (LKR/h)</label><input id="newSlotRate" type="number" value="100" /></div>
+            <button class="btn btn-accent" id="btnAddSlot" type="button">Create slot</button>
+          </div>
+          <div>
+            <div class="field"><label for="updSlotId">Slot ID</label><input id="updSlotId" type="number" /></div>
+            <div class="field">
+              <label for="updSlotStatus">Status</label>
+              <select id="updSlotStatus">
+                <option>AVAILABLE</option><option>RESERVED</option><option>OCCUPIED</option><option>MAINTENANCE</option>
+              </select>
+            </div>
+            <div class="field"><label for="updSlotRate">New rate (optional)</label><input id="updSlotRate" type="number" /></div>
+            <div class="row">
+              <button class="btn btn-secondary" id="btnUpdSlot" type="button">Update slot</button>
+              <button class="btn btn-outline" id="btnDeactSlot" type="button">Deactivate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-reveal>
+        <div class="card-header row" style="justify-content:space-between">
+          <div>
+            <h2 class="card-title">Audit trail</h2>
+            <p class="text-muted text-sm">Sensitive ops log</p>
+          </div>
+          <button class="btn btn-outline btn-sm" id="btnAudit" type="button">Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>When</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+            <tbody id="auditBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js?v=9"></script>
+  <script src="js/manager.js?v=11"></script>
+</body>
+</html>

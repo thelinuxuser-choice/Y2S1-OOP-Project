@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in — parkED</title>
+  <link rel="stylesheet" href="css/app.css?v=9" />
+  <script src="js/loader.js?v=9"></script>
+</head>
+<body>
+  <div class="auth-page">
+    <aside class="auth-aside" data-reveal>
+      <div class="brand" style="color:#fff">park<em style="color:#d4ff00">ED</em></div>
+      <div>
+        <h1>Reserve a bay before the queue finds you.</h1>
+        <p>Live map · adaptive pay · loyalty — parking without the guesswork.</p>
+      </div>
+      <p class="text-sm" style="color:#71717a">SE2030 · Y2S1-MLB-B10G1-07</p>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-box" data-reveal>
+        <div class="badge badge-ok" style="margin-bottom:0.85rem">Welcome back</div>
+        <h2>Sign in</h2>
+        <p class="sub text-muted text-sm">Use your parkED account to continue.</p>
+        <div id="msg" hidden></div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" value="customer@park.lk" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" value="Password@123" autocomplete="current-password" />
+        </div>
+
+        <button class="btn btn-accent btn-block" id="btnLogin">Continue</button>
+
+        <p class="text-xs" style="margin-top:1.25rem">
+          Demo · customer@park.lk · attendant@park.lk · manager@park.lk · Password@123
+        </p>
+        <p class="text-sm" style="margin-top:1rem">
+          No account? <a class="link" href="register.html">Create one</a>
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/api.js?v=9"></script>
+  <script>
+    qs("#btnLogin").onclick = async () => {
+      try {
+        const u = await API.post("/api/auth/login", {
+          email: qs("#email").value,
+          password: qs("#password").value
+        });
+        const routes = {
+          CUSTOMER: "customer.html",
+          ATTENDANT: "attendant.html",
+          MANAGER: "manager.html",
+          ADMIN: "manager.html"
+        };
+        window.location.href = routes[u.role] || "customer.html";
+      } catch (e) {
+        showMsg(qs("#msg"), e.message, false);
+      }
+    };
+  </script>
+</body>
+</html>

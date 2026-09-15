@@ -1,0 +1,57 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE – IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# IDE – Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# IDE – VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# Cursor (local IDE/agent config)
+.cursor/
+
+# Smart Tomcat plugin (local Tomcat install paths & generated conf – per machine)
+.smarttomcat/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+replay_pid*
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local DB credentials (use db.properties.example in repo if you add one)
+src/main/resources/db.properties
+
+# Tomcat / local deploy
+*.tmp
+*.swp
+*~
