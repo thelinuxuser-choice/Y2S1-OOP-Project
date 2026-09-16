@@ -31,6 +31,14 @@ public class FacilityAdminServlet extends HttpServlet {
             JsonUtil.ok(resp, service.listFacilities());
             return;
         }
+        if ("/floors".equals(path)) {
+            int facilityId = 1;
+            if (req.getParameter("facilityId") != null) {
+                facilityId = Integer.parseInt(req.getParameter("facilityId"));
+            }
+            JsonUtil.ok(resp, service.listFloors(facilityId));
+            return;
+        }
         JsonUtil.fail(resp, 404, "Unknown admin route");
     }
 
@@ -66,18 +74,25 @@ public class FacilityAdminServlet extends HttpServlet {
                         body.has("slotType") ? body.get("slotType").getAsString() : "STANDARD",
                         rate,
                         body.has("posRow") ? body.get("posRow").getAsInt() : 0,
-                        body.has("posCol") ? body.get("posCol").getAsInt() : 0));
+                        body.has("posCol") ? body.get("posCol").getAsInt() : 0,
+                        body.has("rateStrategyKey") && !body.get("rateStrategyKey").isJsonNull()
+                                ? body.get("rateStrategyKey").getAsString() : null));
                 AuditLogger.log(u.getUserId(), "ADMIN_SLOT_CREATE", body.get("slotCode").getAsString());
                 return;
             }
             if (path.startsWith("/slots/") && path.endsWith("/update")) {
                 int id = Integer.parseInt(path.substring("/slots/".length(), path.length() - "/update".length()));
+                Integer moveFloor = body.has("floorId") && !body.get("floorId").isJsonNull()
+                        ? body.get("floorId").getAsInt() : null;
                 boolean ok = service.updateSlot(
                         id,
                         body.has("slotType") ? body.get("slotType").getAsString() : null,
                         body.has("baseRate") ? body.get("baseRate").getAsBigDecimal() : null,
                         body.has("status") ? body.get("status").getAsString() : null,
-                        body.has("zoneLabel") ? body.get("zoneLabel").getAsString() : null);
+                        body.has("zoneLabel") ? body.get("zoneLabel").getAsString() : null,
+                        body.has("rateStrategyKey") && !body.get("rateStrategyKey").isJsonNull()
+                                ? body.get("rateStrategyKey").getAsString() : null,
+                        moveFloor);
                 if (!ok) {
                     JsonUtil.fail(resp, 404, "Slot not found");
                     return;

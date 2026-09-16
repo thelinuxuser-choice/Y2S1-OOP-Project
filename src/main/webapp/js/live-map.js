@@ -18,7 +18,16 @@
     var rel = String(path).replace(/^\//, "");
     var url = new URL(rel, global.location.href).pathname;
     return fetch(url, { credentials: "same-origin" }).then(function (res) {
-      return res.json().then(function (json) {
+      return res.text().then(function (text) {
+        var json;
+        try {
+          json = JSON.parse(text);
+        } catch (e) {
+          var hint = res.status >= 500
+            ? "Server error — redeploy WAR and check MySQL is running"
+            : "Expected JSON from " + url + " (got HTML). Check Tomcat context path.";
+          throw new Error(hint);
+        }
         if (!json.ok) throw new Error(json.error || "Map load failed");
         return json.data;
       });
@@ -152,6 +161,9 @@
       }
       byFloor[id].slots.push(s);
     });
+    order.sort(function (a, b) {
+      return Number(a) - Number(b);
+    });
 
     var self = this;
     var selectable = !!this.opts.selectable;
@@ -166,11 +178,12 @@
               selectable && self.selectedId === s.slotId ? " selected" : "";
             var clickable =
               selectable && s.status === "AVAILABLE" ? " is-pickable" : "";
+            var keyTag = s.rateStrategyKey ? " · " + s.rateStrategyKey : "";
             var meta =
               s.slotType && s.status === "AVAILABLE"
-                ? "<small>" + s.slotType + " · LKR " + s.baseRate + "/h</small>"
+                ? "<small>" + s.slotType + keyTag + " · LKR " + s.baseRate + "/h</small>"
                 : s.slotType
-                  ? "<small>" + s.slotType + "</small>"
+                  ? "<small>" + s.slotType + keyTag + "</small>"
                   : "";
             return (
               '<article class="sam-slot ' +
@@ -205,7 +218,9 @@
           '<div class="sam-floor-head">' +
           '<h3 class="lp-floor-label">' +
           floor.label +
-          "</h3>" +
+          ' <span class="text-muted text-sm" style="font-weight:600">(floor #' +
+          fid +
+          ")</span></h3>" +
           '<span class="sam-floor-pill' +
           (dark ? " dark" : "") +
           '" id="floorFree-' +

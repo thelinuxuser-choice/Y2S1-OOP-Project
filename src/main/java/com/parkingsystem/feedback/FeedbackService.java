@@ -1,6 +1,7 @@
 package com.parkingsystem.feedback;
 
 import com.parkingsystem.common.DBConnection;
+import com.parkingsystem.common.SchemaMigrationHelper;
 import com.parkingsystem.livemap.LiveMapModel;
 import com.parkingsystem.livemap.Slot;
 import com.parkingsystem.reservation.Reservation;
@@ -90,6 +91,7 @@ public class FeedbackService {
     }
 
     public List<Map<String, Object>> listMine(int userId) {
+        SchemaMigrationHelper.ensureRuntimeSchema();
         String sql = "SELECT * FROM feedback WHERE user_id = ? ORDER BY created_at DESC";
         List<Map<String, Object>> list = new ArrayList<>();
         try (Connection c = DBConnection.getConnection();
@@ -110,8 +112,9 @@ public class FeedbackService {
         if (rating < 1 || rating > 5) {
             throw new IllegalArgumentException("Rating must be 1–5");
         }
+        preserveOriginal(feedbackId);
         String sql = "UPDATE feedback SET rating = ?, comment_text = ?, "
-                + "feedback_type = ? WHERE feedback_id = ? AND user_id = ?";
+                + "feedback_type = ?, edited_at = CURRENT_TIMESTAMP WHERE feedback_id = ? AND user_id = ?";
         String type = (comment == null || comment.trim().isEmpty()) ? "RATING_ONLY" : "RATING_WITH_COMMENT";
         try (Connection c = DBConnection.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -148,6 +151,64 @@ public class FeedbackService {
         }
     }
 
+    public List<Map<String, Object>> listAllForManager() {
+        String sql = "SELECT f.*, u.full_name FROM feedback f JOIN users u ON u.user_id = f.user_id "
+                + "ORDER BY f.created_at DESC";
+        List<Map<String, Object>> list = new ArrayList<>();
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> m = row(rs);
+                m.put("customer", rs.getString("full_name"));
+                list.add(m);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
+    public Map<String, Object> updateByManager(int feedbackId, int rating, String comment) {
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("Rating must be 1–5");
+        }
+        preserveOriginal(feedbackId);
+        String type = (comment == null || comment.trim().isEmpty()) ? "RATING_ONLY" : "RATING_WITH_COMMENT";
+        String sql = "UPDATE feedback SET rating = ?, comment_text = ?, feedback_type = ?, "
+                + "edited_at = CURRENT_TIMESTAMP WHERE feedback_id = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, rating);
+            ps.setString(2, comment);
+            ps.setString(3, type);
+            ps.setInt(4, feedbackId);
+            if (ps.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Feedback not found");
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Map<String, Object> m = new HashMap<>();
+        m.put("feedbackId", feedbackId);
+        m.put("rating", rating);
+        m.put("comment", comment);
+        return m;
+    }
+
+    public boolean deleteByManager(int feedbackId) {
+        String sql = "DELETE FROM feedback WHERE feedback_id = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, feedbackId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Map<String, Object> row(ResultSet rs) throws Exception {
         Map<String, Object> m = new HashMap<>();
         m.put("feedbackId", rs.getInt("feedback_id"));
@@ -157,7 +218,30 @@ public class FeedbackService {
         m.put("type", rs.getString("feedback_type"));
         m.put("facilityId", rs.getInt("facility_id"));
         m.put("createdAt", rs.getTimestamp("created_at").toLocalDateTime().toString());
+        try {
+            int origRating = rs.getInt("original_rating");
+            boolean hasOrig = !rs.wasNull();
+            m.put("originalRating", hasOrig ? origRating : null);
+            m.put("originalComment", rs.getString("original_comment_text"));
+            java.sql.Timestamp edited = rs.getTimestamp("edited_at");
+            m.put("editedAt", edited != null ? edited.toLocalDateTime().toString() : null);
+            m.put("edited", hasOrig);
+        } catch (Exception ignored) {
+            m.put("edited", false);
+        }
         return m;
+    }
+
+    private void preserveOriginal(int feedbackId) {
+        String sql = "UPDATE feedback SET original_rating = rating, original_comment_text = comment_text "
+                + "WHERE feedback_id = ? AND original_rating IS NULL";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, feedbackId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("preserve original feedback failed", e);
+        }
     }
 
     private boolean existsForReservation(int reservationId) {

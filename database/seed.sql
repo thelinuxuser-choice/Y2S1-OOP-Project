@@ -32,6 +32,12 @@ INSERT INTO slots (floor_id, slot_code, zone_label, slot_type, status, base_rate
 (2, 'L1-B2', 'Zone B', 'STANDARD', 'AVAILABLE', 110.00, 1, 1),
 (2, 'L1-B3', 'Zone B', 'ACCESSIBLE', 'AVAILABLE', 90.00, 1, 2);
 
+INSERT INTO pricing_strategy_keys (key_code, label, key_scope) VALUES
+('PEAK_HOUR', 'Peak hours (time-based)', 'GLOBAL'),
+('EV_SLOT', 'EV bay surcharge', 'SLOT'),
+('ACCESSIBLE', 'Accessible bay discount', 'SLOT'),
+('COVERED', 'Covered bay surcharge', 'SLOT');
+
 INSERT INTO rate_rules (rule_name, strategy_key, multiplier, is_active) VALUES
 ('Peak morning/evening', 'PEAK_HOUR', 1.50, 1),
 ('EV charging bay surcharge', 'EV_SLOT', 1.25, 1),

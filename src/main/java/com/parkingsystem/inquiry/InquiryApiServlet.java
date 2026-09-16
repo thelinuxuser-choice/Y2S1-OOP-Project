@@ -86,12 +86,26 @@ public class InquiryApiServlet extends HttpServlet {
                 JsonUtil.ok(resp, inq);
                 return;
             }
+            if ("/reply".equals(path)) {
+                if (!SessionHelper.hasRole(u, UserRole.MANAGER, UserRole.ADMIN)) {
+                    JsonUtil.fail(resp, 403, "Staff only");
+                    return;
+                }
+                String refOrId = body.has("referenceNo") && !body.get("referenceNo").isJsonNull()
+                        ? body.get("referenceNo").getAsString()
+                        : String.valueOf(body.get("inquiryId").getAsInt());
+                int id = service.resolveInquiryId(refOrId);
+                service.reply(id, u.getUserId(), body.get("message").getAsString());
+                JsonUtil.ok(resp, "replied");
+                return;
+            }
             if (path.startsWith("/reply/")) {
                 if (!SessionHelper.hasRole(u, UserRole.MANAGER, UserRole.ADMIN)) {
                     JsonUtil.fail(resp, 403, "Staff only");
                     return;
                 }
-                int id = Integer.parseInt(path.substring("/reply/".length()));
+                String refOrId = path.substring("/reply/".length());
+                int id = service.resolveInquiryId(java.net.URLDecoder.decode(refOrId, "UTF-8"));
                 service.reply(id, u.getUserId(), body.get("message").getAsString());
                 JsonUtil.ok(resp, "replied");
                 return;

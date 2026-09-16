@@ -2,6 +2,7 @@ package com.parkingsystem.loyalty;
 
 import com.parkingsystem.common.AuditLogger;
 import com.parkingsystem.common.DBConnection;
+import com.parkingsystem.common.SchemaMigrationHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +32,7 @@ public final class LoyaltyProgramManager {
     }
 
     public Map<String, Object> enroll(int userId) {
+        SchemaMigrationHelper.ensureRuntimeSchema();
         if (getAccount(userId) != null) {
             return getAccount(userId);
         }
@@ -58,7 +60,10 @@ public final class LoyaltyProgramManager {
                     m.put("userId", rs.getInt("user_id"));
                     m.put("points", rs.getInt("points_balance"));
                     m.put("tier", rs.getString("tier"));
-                    m.put("enrolledAt", rs.getTimestamp("enrolled_at").toLocalDateTime().toString());
+                    java.sql.Timestamp enrolled = rs.getTimestamp("enrolled_at");
+                    if (enrolled != null) {
+                        m.put("enrolledAt", enrolled.toLocalDateTime().toString());
+                    }
                     return m;
                 }
             }

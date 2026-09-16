@@ -1,6 +1,7 @@
 package com.parkingsystem.admin;
 
 import com.parkingsystem.common.DBConnection;
+import com.parkingsystem.common.SchemaMigrationHelper;
 import com.parkingsystem.livemap.SlotStatus;
 import com.parkingsystem.livemap.SlotType;
 
@@ -16,6 +17,27 @@ import java.util.Map;
 
 // facility / slot config (M.5) – manager/admin CRUD for live map layout
 public class FacilityAdminService {
+
+    public List<Map<String, Object>> listFloors(int facilityId) {
+        String sql = "SELECT floor_id, facility_id, floor_label FROM floors WHERE facility_id = ? ORDER BY floor_id";
+        List<Map<String, Object>> list = new ArrayList<>();
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, facilityId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("floorId", rs.getInt("floor_id"));
+                    m.put("facilityId", rs.getInt("facility_id"));
+                    m.put("floorLabel", rs.getString("floor_label"));
+                    list.add(m);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("list floors failed", e);
+        }
+        return list;
+    }
 
     public List<Map<String, Object>> listFacilities() {
         String sql = "SELECT facility_id, name, location, is_active FROM facilities ORDER BY facility_id";
@@ -70,13 +92,19 @@ public class FacilityAdminService {
     }
 
     public Map<String, Object> createSlot(int floorId, String code, String zone, String type,
-                                          BigDecimal rate, int row, int col) {
+                                          BigDecimal rate, int row, int col, String rateStrategyKey) {
+        SchemaMigrationHelper.ensureRuntimeSchema();
+        if (!floorExists(floorId)) {
+            throw new IllegalArgumentException(
+                    "Unknown floor ID " + floorId + ". Pick a floor from the list or create a new floor first.");
+        }
         if (code == null || code.trim().isEmpty()) {
             throw new IllegalArgumentException("Slot code required");
         }
         SlotType.valueOf(type == null ? "STANDARD" : type.toUpperCase());
-        String sql = "INSERT INTO slots (floor_id, slot_code, zone_label, slot_type, status, base_rate, pos_row, pos_col) "
-                + "VALUES (?, ?, ?, ?, 'AVAILABLE', ?, ?, ?)";
+        String slotKey = normalizeSlotKey(rateStrategyKey);
+        String sql = "INSERT INTO slots (floor_id, slot_code, zone_label, slot_type, status, base_rate, pos_row, pos_col, rate_strategy_key) "
+                + "VALUES (?, ?, ?, ?, 'AVAILABLE', ?, ?, ?, ?)";
         try (Connection c = DBConnection.getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, floorId);
@@ -86,6 +114,7 @@ public class FacilityAdminService {
             ps.setBigDecimal(5, rate == null ? new BigDecimal("100.00") : rate);
             ps.setInt(6, row);
             ps.setInt(7, col);
+            ps.setString(8, slotKey);
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 keys.next();
@@ -100,7 +129,8 @@ public class FacilityAdminService {
         }
     }
 
-    public boolean updateSlot(int slotId, String type, BigDecimal rate, String status, String zone) {
+    public boolean updateSlot(int slotId, String type, BigDecimal rate, String status, String zone,
+                              String rateStrategyKey, Integer floorId) {
         if (status != null) {
             SlotStatus.valueOf(status.toUpperCase());
         }
@@ -124,6 +154,17 @@ public class FacilityAdminService {
         if (zone != null) {
             sql.append("zone_label = ?, ");
             args.add(zone);
+        }
+        if (rateStrategyKey != null) {
+            sql.append("rate_strategy_key = ?, ");
+            args.add(normalizeSlotKey(rateStrategyKey));
+        }
+        if (floorId != null) {
+            if (!floorExists(floorId)) {
+                throw new IllegalArgumentException("Unknown floor ID " + floorId);
+            }
+            sql.append("floor_id = ?, ");
+            args.add(floorId);
         }
         if (args.isEmpty()) {
             throw new IllegalArgumentException("Nothing to update");
@@ -171,6 +212,31 @@ public class FacilityAdminService {
         } catch (Exception e) {
             throw new RuntimeException("facility update failed", e);
         }
+    }
+
+    private boolean floorExists(int floorId) {
+        String sql = "SELECT 1 FROM floors WHERE floor_id = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, floorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("floor lookup failed", e);
+        }
+    }
+
+    private String normalizeSlotKey(String rateStrategyKey) {
+        if (rateStrategyKey == null || rateStrategyKey.trim().isEmpty() || "NONE".equalsIgnoreCase(rateStrategyKey)) {
+            return null;
+        }
+        com.parkingsystem.payment.StrategyKeyDAO keys = new com.parkingsystem.payment.StrategyKeyDAO();
+        String code = com.parkingsystem.payment.StrategyKeyDAO.normalize(rateStrategyKey);
+        if (!keys.exists(code)) {
+            throw new IllegalArgumentException("Unknown strategy key: " + code + " — create it under Adaptive rate rules first");
+        }
+        return code;
     }
 
     private List<Map<String, Object>> query(String sql, Integer id) {

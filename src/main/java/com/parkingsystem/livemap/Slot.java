@@ -18,6 +18,7 @@ public class Slot implements Serializable {
     private BigDecimal baseRate;
     private int posRow;
     private int posCol;
+    private String rateStrategyKey;
 
     public int getSlotId() {
         return slotId;
@@ -113,5 +114,13 @@ public class Slot implements Serializable {
 
     public void setPosCol(int posCol) {
         this.posCol = posCol;
+    }
+
+    public String getRateStrategyKey() {
+        return rateStrategyKey;
+    }
+
+    public void setRateStrategyKey(String rateStrategyKey) {
+        this.rateStrategyKey = rateStrategyKey;
     }
 }

@@ -12,8 +12,10 @@ public class PricingEngine {
     private final List<PricingStrategy> strategies = new ArrayList<>();
 
     public PricingEngine() {
-        strategies.add(new PeakHourStrategy(new BigDecimal("1.50")));
-        strategies.add(new EvSlotStrategy(new BigDecimal("1.25")));
+        RateRuleDAO rules = new RateRuleDAO();
+        strategies.add(new PeakHourStrategy(rules.multiplierFor("PEAK_HOUR", new BigDecimal("1.50"))));
+        strategies.add(new EvSlotStrategy(rules.multiplierFor("EV_SLOT", new BigDecimal("1.25"))));
+        strategies.add(new SlotAssignedStrategy());
         strategies.add(new SlotTypeStrategy());
         strategies.add(new LoyaltyRedemptionStrategy());
     }
@@ -35,7 +37,11 @@ public class PricingEngine {
             BigDecimal before = running;
             running = s.apply(running, ctx);
             if (before.compareTo(running) != 0) {
-                applied.add(s.description() + " → LKR " + running);
+                String line = s.description();
+                if (s instanceof SlotAssignedStrategy && ctx.getRateStrategyKey() != null) {
+                    line = "Bay key " + ctx.getRateStrategyKey() + " (" + line + ")";
+                }
+                applied.add(line + " → LKR " + running);
             }
         }
 

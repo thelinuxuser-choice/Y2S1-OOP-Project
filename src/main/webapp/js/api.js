@@ -17,11 +17,15 @@ const API = {
       ...options
     };
     const res = await fetch(url, opts);
+    const text = await res.text();
     let json;
     try {
-      json = await res.json();
+      json = JSON.parse(text);
     } catch (e) {
-      throw Object.assign(new Error("Bad response (HTTP " + res.status + ")"), { status: res.status });
+      const hint = res.status >= 500
+        ? "Server error (HTTP " + res.status + ") — redeploy WAR and verify MySQL + db.properties"
+        : "Bad response (HTTP " + res.status + ") — not JSON (wrong URL or login redirect?)";
+      throw Object.assign(new Error(hint), { status: res.status });
     }
     if (!json.ok) {
       const err = new Error(json.error || ("HTTP " + res.status));

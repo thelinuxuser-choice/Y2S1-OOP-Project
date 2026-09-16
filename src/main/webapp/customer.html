@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Customer — parkED</title>
-  <link rel="stylesheet" href="css/app.css?v=10" />
+  <link rel="stylesheet" href="css/app.css?v=11" />
   <link rel="stylesheet" href="css/live-map.css?v=1" />
   <script src="js/loader.js?v=9"></script>
 </head>
@@ -122,8 +122,9 @@
       <section id="sec-pay" class="card" hidden>
         <div class="card-header">
           <h2 class="card-title">Payment</h2>
-          <p class="text-muted text-sm">Adaptive rates and loyalty redemption before checkout.</p>
+          <p class="text-muted text-sm">Peak-hour rates, slot discounts, and loyalty redemption (LKR).</p>
         </div>
+        <div id="rateInfoBox" class="text-sm text-muted" style="margin-bottom:1rem;padding:0.85rem;background:#f6f4ee;border-radius:1rem"></div>
         <div class="grid-2">
           <div>
             <div class="field">
@@ -139,17 +140,36 @@
               <button class="btn btn-accent" id="btnPay" type="button">Pay now</button>
             </div>
           </div>
-          <pre class="quote" id="quoteBox">Quote appears here</pre>
+          <pre class="quote" id="quoteBox">Quote breakdown appears here</pre>
+        </div>
+        <h3 style="margin:1.25rem 0 0.5rem;font-size:1rem">My payments</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Invoice</th><th>Reservation</th><th>Amount</th><th>Status</th><th>Strategy</th></tr></thead>
+            <tbody id="payHist"></tbody>
+          </table>
         </div>
       </section>
 
       <section id="sec-loyalty" class="card" hidden>
         <div class="card-header">
           <h2 class="card-title">Loyalty</h2>
-          <p class="text-muted text-sm">Points, tier, and history.</p>
+          <p class="text-muted text-sm">Points, tier, refunds, and ledger.</p>
         </div>
         <div id="loyBox" class="stack"></div>
-        <button class="btn btn-outline" id="btnEnroll" type="button" style="margin:1rem 0">Enroll if needed</button>
+        <div class="row" style="margin:1rem 0">
+          <button class="btn btn-outline" id="btnEnroll" type="button">Enroll</button>
+          <button class="btn btn-outline" id="btnUnenroll" type="button">Leave program</button>
+        </div>
+        <h3 style="font-size:1rem;margin-bottom:0.5rem">Payment &amp; refund status</h3>
+        <p class="text-muted text-sm" style="margin-bottom:0.5rem">Shows PAID / REFUNDED — loyalty ADJUST rows follow refunds.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Invoice</th><th>Reservation</th><th>LKR</th><th>Status</th></tr></thead>
+            <tbody id="loyPayStatus"></tbody>
+          </table>
+        </div>
+        <h3 style="font-size:1rem;margin:1rem 0 0.5rem">Points history</h3>
         <div class="table-wrap">
           <table>
             <thead><tr><th>When</th><th>Type</th><th>Points</th><th>Ref</th></tr></thead>
@@ -184,15 +204,34 @@
           <textarea id="fbComment"></textarea>
         </div>
         <button class="btn btn-accent" id="btnFb" type="button">Submit feedback</button>
+        <h3 style="margin:1.25rem 0 0.5rem;font-size:1rem">My reviews &amp; ratings</h3>
+        <p class="text-muted text-sm" style="margin-bottom:0.5rem">After a visit is <strong>COMPLETED</strong>, submit feedback here. Edits keep the original on file.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Res</th><th>Current</th><th>Original</th><th>Status</th><th></th></tr></thead>
+            <tbody id="fbMine"></tbody>
+          </table>
+        </div>
       </section>
 
-      <section id="sec-inq" class="card" hidden>
+      <section id="sec-inq" class="card inq-page" hidden>
         <div class="card-header">
           <h2 class="card-title">Inquiries</h2>
-          <p class="text-muted text-sm">Open a support ticket for booking, payment, or map issues.</p>
+          <p class="text-muted text-sm">Open a ticket, then select <strong>View conversation</strong> to see staff replies.</p>
         </div>
-        <div class="grid-2">
-          <div>
+
+        <div class="table-wrap inq-table-wrap">
+          <table>
+            <thead>
+              <tr><th>Ref</th><th>Subject</th><th>Category</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="inqBody"></tbody>
+          </table>
+        </div>
+
+        <div class="inq-split">
+          <div class="inq-panel">
+            <h3 class="inq-panel-title">New ticket</h3>
             <div class="field">
               <label for="inqCat">Category</label>
               <select id="inqCat">
@@ -206,23 +245,23 @@
             </div>
             <div class="field">
               <label for="inqDesc">Description</label>
-              <textarea id="inqDesc"></textarea>
+              <textarea id="inqDesc" rows="5"></textarea>
             </div>
-            <button class="btn btn-accent" id="btnInq" type="button">Open ticket</button>
+            <button class="btn btn-accent btn-block" id="btnInq" type="button">Open ticket</button>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Ref</th><th>Subject</th><th>Status</th></tr></thead>
-              <tbody id="inqBody"></tbody>
-            </table>
+
+          <div class="inq-panel inq-thread-panel">
+            <h3 class="inq-panel-title" id="inqThreadTitle">Conversation</h3>
+            <p class="text-muted text-sm" id="inqThreadHint">Choose a ticket from the table above.</p>
+            <div id="inqThread" class="inq-thread"></div>
           </div>
         </div>
       </section>
     </div>
   </div>
 
-  <script src="js/api.js?v=9"></script>
-  <script src="js/live-map.js?v=1"></script>
-  <script src="js/customer.js?v=10"></script>
+  <script src="js/api.js?v=10"></script>
+  <script src="js/live-map.js?v=4"></script>
+  <script src="js/customer.js?v=14"></script>
 </body>
 </html>

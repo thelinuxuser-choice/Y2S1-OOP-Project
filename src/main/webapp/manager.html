@@ -47,14 +47,70 @@
       </div>
 
       <div class="card" data-reveal>
-        <div class="card-header">
-          <h2 class="card-title">Revenue</h2>
-          <p class="text-muted text-sm">Paid invoices</p>
+        <div class="card-header row" style="justify-content:space-between">
+          <div>
+            <h2 class="card-title">Revenue</h2>
+            <p class="text-muted text-sm">All invoices (PAID / REFUNDED)</p>
+          </div>
+          <button class="btn btn-accent btn-sm" id="btnGenReport" type="button">Generate report</button>
         </div>
+        <div id="revSummary" class="text-sm" style="margin-bottom:0.75rem;font-weight:600"></div>
+        <pre class="quote" id="revReport" style="display:none;margin-bottom:1rem;max-height:200px"></pre>
+        <button class="btn btn-outline btn-sm" id="btnDownloadCsv" type="button" style="display:none;margin-bottom:1rem">Download CSV</button>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Invoice</th><th>Reservation</th><th>Amount</th><th>Status</th><th></th></tr></thead>
             <tbody id="rev"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" data-reveal>
+        <div class="card-header">
+          <h2 class="card-title">Adaptive rate rules</h2>
+          <p class="text-muted text-sm">Peak hours and bay-type multipliers applied at checkout.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Key</th><th>×</th><th>Active</th><th></th></tr></thead>
+            <tbody id="rateRules"></tbody>
+          </table>
+        </div>
+        <h3 style="font-size:1rem;margin:1.25rem 0 0.5rem">Strategy keys</h3>
+        <p class="text-muted text-sm">Create a key first, then attach a rate rule and assign the key to bays on the map.</p>
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="field"><label for="newKeyCode">Key code</label><input id="newKeyCode" placeholder="DAY_DISCOUNT" /></div>
+          <div class="field"><label for="newKeyLabel">Label</label><input id="newKeyLabel" placeholder="50% discount day" /></div>
+          <div style="display:flex;align-items:flex-end"><button class="btn btn-secondary" id="btnAddStrategyKey" type="button">Create key</button></div>
+        </div>
+        <div class="grid-2" style="margin-top:1rem">
+          <div class="field"><label for="newRuleName">Rule name</label><input id="newRuleName" placeholder="Peak evening" /></div>
+          <div class="field"><label for="newRuleKey">Strategy key</label>
+            <select id="newRuleKey"><option value="">Loading keys…</option></select>
+          </div>
+          <div class="field"><label for="newRuleMult">Multiplier</label><input id="newRuleMult" type="number" step="0.01" value="1.5" /></div>
+          <div style="display:flex;align-items:flex-end"><button class="btn btn-accent" id="btnAddRule" type="button">Create rule</button></div>
+        </div>
+      </div>
+
+      <div class="card" data-reveal>
+        <div class="card-header">
+          <h2 class="card-title">Loyalty program config</h2>
+          <p class="text-muted text-sm">Earn, redeem, and tier thresholds for the loyalty program.</p>
+        </div>
+        <div id="loyRules" class="grid-2"></div>
+        <button class="btn btn-accent" id="btnSaveLoyRules" type="button" style="margin-top:1rem">Save loyalty rules</button>
+      </div>
+
+      <div class="card" data-reveal>
+        <div class="card-header">
+          <h2 class="card-title">Feedback management</h2>
+          <p class="text-muted text-sm">Review, edit, or remove customer ratings and comments.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Customer</th><th>Res</th><th>Rating</th><th>Comment</th><th></th></tr></thead>
+            <tbody id="fbAll"></tbody>
           </table>
         </div>
       </div>
@@ -66,14 +122,14 @@
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Ref</th><th>Subject</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead><tr><th>ID</th><th>Ref</th><th>Subject</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody id="inq"></tbody>
           </table>
         </div>
         <div class="grid-2" style="margin-top:1.25rem">
           <div class="field">
-            <label for="replyId">Reply to inquiry ID</label>
-            <input id="replyId" type="number" />
+            <label for="replyId">Inquiry ID or ref (e.g. INQ-312745CC)</label>
+            <input id="replyId" type="text" placeholder="1 or INQ-…" />
           </div>
           <div class="field">
             <label for="replyMsg">Message</label>
@@ -85,22 +141,30 @@
 
       <div class="card" data-reveal>
         <div class="card-header">
-          <h2 class="card-title">Facility &amp; slots (M.5)</h2>
-          <p class="text-muted text-sm">Create bays or set maintenance / rates</p>
+          <h2 class="card-title">Facility &amp; slots</h2>
+          <p class="text-muted text-sm">Floors use database IDs — e.g. <strong>1 = Ground</strong>, <strong>2 = Level 1</strong>. Add a floor before using ID 3+.</p>
+        </div>
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="field"><label for="newFloorLabel">New floor label</label><input id="newFloorLabel" placeholder="Level 2" /></div>
+          <div style="display:flex;align-items:flex-end"><button class="btn btn-secondary" id="btnAddFloor" type="button">Add floor</button></div>
         </div>
         <div class="grid-2">
           <div>
-            <div class="field"><label for="newFloorId">Floor ID</label><input id="newFloorId" type="number" value="1" /></div>
+            <div class="field"><label for="newFloorId">Floor</label><select id="newFloorId"></select></div>
             <div class="field"><label for="newSlotCode">Slot code</label><input id="newSlotCode" placeholder="G-C1" /></div>
             <div class="field">
               <label for="newSlotType">Type</label>
               <select id="newSlotType"><option>STANDARD</option><option>EV</option><option>ACCESSIBLE</option><option>COVERED</option></select>
             </div>
             <div class="field"><label for="newSlotRate">Base rate (LKR/h)</label><input id="newSlotRate" type="number" value="100" /></div>
+            <div class="field"><label for="newSlotStrategyKey">Pricing strategy key</label>
+              <select id="newSlotStrategyKey"><option value="">None</option></select>
+            </div>
             <button class="btn btn-accent" id="btnAddSlot" type="button">Create slot</button>
           </div>
           <div>
             <div class="field"><label for="updSlotId">Slot ID</label><input id="updSlotId" type="number" /></div>
+            <div class="field"><label for="updSlotFloor">Move to floor</label><select id="updSlotFloor"><option value="">— leave on current floor —</option></select></div>
             <div class="field">
               <label for="updSlotStatus">Status</label>
               <select id="updSlotStatus">
@@ -108,6 +172,9 @@
               </select>
             </div>
             <div class="field"><label for="updSlotRate">New rate (optional)</label><input id="updSlotRate" type="number" /></div>
+            <div class="field"><label for="updSlotStrategyKey">Pricing strategy key</label>
+              <select id="updSlotStrategyKey"><option value="">— leave unchanged —</option><option value="NONE">Clear key</option></select>
+            </div>
             <div class="row">
               <button class="btn btn-secondary" id="btnUpdSlot" type="button">Update slot</button>
               <button class="btn btn-outline" id="btnDeactSlot" type="button">Deactivate</button>
@@ -134,7 +201,7 @@
     </div>
   </div>
 
-  <script src="js/api.js?v=9"></script>
-  <script src="js/manager.js?v=11"></script>
+  <script src="js/api.js?v=10"></script>
+  <script src="js/manager.js?v=15"></script>
 </body>
 </html>

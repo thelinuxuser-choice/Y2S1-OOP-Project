@@ -52,6 +52,7 @@ CREATE TABLE slots (
     base_rate   DECIMAL(10,2) NOT NULL DEFAULT 100.00,
     pos_row     INT DEFAULT 0,
     pos_col     INT DEFAULT 0,
+    rate_strategy_key VARCHAR(40) NULL,
     UNIQUE KEY uq_floor_slot (floor_id, slot_code),
     FOREIGN KEY (floor_id) REFERENCES floors(floor_id) ON DELETE CASCADE
 );
@@ -85,6 +86,13 @@ CREATE TABLE payments (
     invoice_no     VARCHAR(40),
     paid_at        DATETIME NULL,
     FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
+);
+
+CREATE TABLE pricing_strategy_keys (
+    key_code   VARCHAR(40) PRIMARY KEY,
+    label      VARCHAR(80) NOT NULL,
+    key_scope  ENUM('SLOT','GLOBAL') NOT NULL DEFAULT 'SLOT',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE rate_rules (
@@ -124,6 +132,9 @@ CREATE TABLE feedback (
     rating         TINYINT NOT NULL,
     comment_text   VARCHAR(1000),
     feedback_type  ENUM('RATING_ONLY','RATING_WITH_COMMENT','FACILITY_REVIEW') NOT NULL,
+    original_rating TINYINT NULL,
+    original_comment_text VARCHAR(1000) NULL,
+    edited_at      DATETIME NULL,
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CHECK (rating BETWEEN 1 AND 5),
     FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),

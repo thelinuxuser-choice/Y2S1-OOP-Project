@@ -1,6 +1,7 @@
 package com.parkingsystem.livemap;
 
 import com.parkingsystem.common.DBConnection;
+import com.parkingsystem.common.SchemaMigrationHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,9 +54,11 @@ public class LiveMapModel {
     }
 
     public List<Slot> listSlots(int facilityId, String typeFilter) {
+        SchemaMigrationHelper.ensureRuntimeSchema();
         StringBuilder sql = new StringBuilder(
                 "SELECT s.slot_id, s.floor_id, fl.floor_label, fl.facility_id, f.name AS facility_name, "
-                        + "s.slot_code, s.zone_label, s.slot_type, s.status, s.base_rate, s.pos_row, s.pos_col "
+                        + "s.slot_code, s.zone_label, s.slot_type, s.status, s.base_rate, s.pos_row, s.pos_col, "
+                        + "s.rate_strategy_key "
                         + "FROM slots s "
                         + "JOIN floors fl ON fl.floor_id = s.floor_id "
                         + "JOIN facilities f ON f.facility_id = fl.facility_id "
@@ -84,8 +87,10 @@ public class LiveMapModel {
     }
 
     public Slot findSlot(int slotId) {
+        SchemaMigrationHelper.ensureRuntimeSchema();
         String sql = "SELECT s.slot_id, s.floor_id, fl.floor_label, fl.facility_id, f.name AS facility_name, "
-                + "s.slot_code, s.zone_label, s.slot_type, s.status, s.base_rate, s.pos_row, s.pos_col "
+                + "s.slot_code, s.zone_label, s.slot_type, s.status, s.base_rate, s.pos_row, s.pos_col, "
+                + "s.rate_strategy_key "
                 + "FROM slots s "
                 + "JOIN floors fl ON fl.floor_id = s.floor_id "
                 + "JOIN facilities f ON f.facility_id = fl.facility_id "
@@ -130,6 +135,11 @@ public class LiveMapModel {
         s.setBaseRate(rs.getBigDecimal("base_rate"));
         s.setPosRow(rs.getInt("pos_row"));
         s.setPosCol(rs.getInt("pos_col"));
+        try {
+            s.setRateStrategyKey(rs.getString("rate_strategy_key"));
+        } catch (Exception ignored) {
+            s.setRateStrategyKey(null);
+        }
         return s;
     }
 }

@@ -144,6 +144,50 @@ public class InquiryService {
         return list;
     }
 
+    /** Accepts numeric inquiry_id or full reference e.g. INQ-312745CC. */
+    public int resolveInquiryId(String referenceOrId) {
+        if (referenceOrId == null || referenceOrId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Inquiry ID or reference required");
+        }
+        String raw = referenceOrId.trim();
+        if (raw.toUpperCase().startsWith("INQ-")) {
+            Inquiry inq = findByReferenceNo(raw.toUpperCase());
+            if (inq == null) {
+                throw new IllegalArgumentException("Inquiry not found for reference " + raw);
+            }
+            return inq.getInquiryId();
+        }
+        try {
+            int id = Integer.parseInt(raw);
+            if (findById(id) == null) {
+                throw new IllegalArgumentException("Inquiry not found (#" + id + "). Use the ID column, not digits from the ref.");
+            }
+            return id;
+        } catch (NumberFormatException e) {
+            Inquiry inq = findByReferenceNo(raw);
+            if (inq == null) {
+                throw new IllegalArgumentException("Inquiry not found");
+            }
+            return inq.getInquiryId();
+        }
+    }
+
+    public Inquiry findByReferenceNo(String referenceNo) {
+        String sql = "SELECT * FROM inquiries WHERE reference_no = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, referenceNo);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return map(rs);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     public Inquiry findById(int id) {
         String sql = "SELECT * FROM inquiries WHERE inquiry_id = ?";
         try (Connection c = DBConnection.getConnection();

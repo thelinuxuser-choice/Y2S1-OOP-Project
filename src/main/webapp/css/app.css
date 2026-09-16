@@ -490,6 +490,76 @@ tr:last-child td { border-bottom: 0; }
   gap: 1rem;
 }
 @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Customer inquiries — full-width layout + thread */
+.inq-page {
+  width: 100%;
+  max-width: none;
+}
+.inq-table-wrap {
+  margin-bottom: 1.25rem;
+}
+.inq-split {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .inq-split { grid-template-columns: 1fr; }
+}
+.inq-panel {
+  background: #faf9f6;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.1rem 1.15rem;
+}
+.inq-panel-title {
+  margin: 0 0 0.85rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.inq-thread-panel {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+.inq-thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: min(420px, 50vh);
+  overflow-y: auto;
+  padding: 0.25rem 0;
+}
+.inq-msg {
+  max-width: 92%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.85rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.inq-msg.you {
+  align-self: flex-end;
+  background: #1a1a1a;
+  color: #fff;
+}
+.inq-msg.staff {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid var(--border);
+}
+.inq-msg-meta {
+  display: block;
+  font-size: 0.72rem;
+  opacity: 0.75;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+tr.inq-row-active td {
+  background: #f0fde0;
+}
 .stack { display: flex; flex-direction: column; gap: 0.75rem; }
 .row { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
 .spacer { flex: 1; }

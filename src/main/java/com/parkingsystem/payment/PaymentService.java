@@ -44,6 +44,9 @@ public class PaymentService {
         LocalDateTime end = actualEnd != null && actualEnd.isAfter(r.getEndTime()) ? actualEnd : r.getEndTime();
         ctx.setEndTime(end);
         ctx.setSlotType(slot.getSlotType().name());
+        if (slot.getRateStrategyKey() != null && !slot.getRateStrategyKey().isEmpty()) {
+            ctx.setRateStrategyKey(slot.getRateStrategyKey());
+        }
         ctx.setLoyaltyPointsToRedeem(pointsToRedeem);
         if (r.getVehicleId() != null) {
             Vehicle v = vehicleDAO.findById(r.getVehicleId());
@@ -167,6 +170,50 @@ public class PaymentService {
 
     public List<Payment> listForUser(int userId) {
         return paymentDAO.listByUser(userId);
+    }
+
+    public Map<String, Object> rateInfo() {
+        Map<String, Object> m = new HashMap<>();
+        m.put("currency", "LKR");
+        m.put("peakWindows", java.util.Arrays.asList("07:00–09:30", "16:30–19:00"));
+        m.put("rules", new RateRuleDAO().listActive());
+        m.put("strategyKeys", new StrategyKeyDAO().listAll());
+        m.put("loyaltyRedeem", "10 points = LKR 1 off (max 30% of bill)");
+        return m;
+    }
+
+    public StrategyKeyDAO strategyKeys() {
+        return new StrategyKeyDAO();
+    }
+
+    public Map<String, Object> revenueReport() {
+        List<Payment> all = paymentDAO.listAll();
+        java.math.BigDecimal totalPaid = java.math.BigDecimal.ZERO;
+        java.math.BigDecimal totalRefunded = java.math.BigDecimal.ZERO;
+        int countPaid = 0;
+        int countRefunded = 0;
+        for (Payment p : all) {
+            if ("PAID".equals(p.getStatus())) {
+                totalPaid = totalPaid.add(p.getFinalAmount());
+                countPaid++;
+            } else if ("REFUNDED".equals(p.getStatus())) {
+                totalRefunded = totalRefunded.add(p.getFinalAmount());
+                countRefunded++;
+            }
+        }
+        Map<String, Object> m = new HashMap<>();
+        m.put("generatedAt", LocalDateTime.now().toString());
+        m.put("countPaid", countPaid);
+        m.put("countRefunded", countRefunded);
+        m.put("totalPaidLkr", totalPaid);
+        m.put("totalRefundedLkr", totalRefunded);
+        m.put("netRevenueLkr", totalPaid.subtract(totalRefunded));
+        m.put("rows", all);
+        return m;
+    }
+
+    public RateRuleDAO rateRules() {
+        return new RateRuleDAO();
     }
 
     private Payment findPayment(int paymentId) {

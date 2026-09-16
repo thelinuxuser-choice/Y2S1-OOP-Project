@@ -36,15 +36,19 @@ public class LiveMapController extends HttpServlet {
         }
 
         if ("/slots".equals(path) || "/refresh".equals(path)) {
-            int facilityId = intParam(req, "facilityId", 1);
-            String type = req.getParameter("type");
-            List<Slot> slots = model.listSlots(facilityId, type);
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("facilityId", facilityId);
-            payload.put("floors", model.listFloors(facilityId));
-            payload.put("slots", slots);
-            payload.put("legend", MapViewHelper.legend());
-            JsonUtil.ok(resp, payload);
+            try {
+                int facilityId = intParam(req, "facilityId", 1);
+                String type = req.getParameter("type");
+                List<Slot> slots = model.listSlots(facilityId, type);
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("facilityId", facilityId);
+                payload.put("floors", model.listFloors(facilityId));
+                payload.put("slots", slots);
+                payload.put("legend", MapViewHelper.legend());
+                JsonUtil.ok(resp, payload);
+            } catch (Exception e) {
+                JsonUtil.fail(resp, 500, e.getMessage() != null ? e.getMessage() : "Map load failed");
+            }
             return;
         }
 
@@ -65,16 +69,20 @@ public class LiveMapController extends HttpServlet {
                 JsonUtil.fail(resp, 403, "Manager access only");
                 return;
             }
-            int facilityId = intParam(req, "facilityId", 1);
-            List<Slot> slots = model.listSlots(facilityId, null);
-            Map<String, Long> counts = new HashMap<>();
-            for (SlotStatus st : SlotStatus.values()) {
-                counts.put(st.name(), slots.stream().filter(s -> s.getStatus() == st).count());
+            try {
+                int facilityId = intParam(req, "facilityId", 1);
+                List<Slot> slots = model.listSlots(facilityId, null);
+                Map<String, Long> counts = new HashMap<>();
+                for (SlotStatus st : SlotStatus.values()) {
+                    counts.put(st.name(), slots.stream().filter(s -> s.getStatus() == st).count());
+                }
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("counts", counts);
+                payload.put("slots", slots);
+                JsonUtil.ok(resp, payload);
+            } catch (Exception e) {
+                JsonUtil.fail(resp, 500, e.getMessage() != null ? e.getMessage() : "Occupancy load failed");
             }
-            Map<String, Object> payload = new HashMap<>();
-            payload.put("counts", counts);
-            payload.put("slots", slots);
-            JsonUtil.ok(resp, payload);
             return;
         }
 

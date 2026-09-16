@@ -26,6 +26,14 @@ public class FeedbackApiServlet extends HttpServlet {
             return;
         }
         String path = req.getPathInfo() == null ? "" : req.getPathInfo();
+        if ("/all".equals(path)) {
+            if (!SessionHelper.hasRole(u, UserRole.MANAGER, UserRole.ADMIN)) {
+                JsonUtil.fail(resp, 403, "Manager only");
+                return;
+            }
+            JsonUtil.ok(resp, service.listAllForManager());
+            return;
+        }
         if ("/recent".equals(path)) {
             if (!SessionHelper.hasRole(u, UserRole.MANAGER, UserRole.ADMIN)) {
                 JsonUtil.fail(resp, 403, "Manager only");
@@ -52,14 +60,31 @@ public class FeedbackApiServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         User u = SessionHelper.requireUser(req);
-        if (u == null || u.getRole() != UserRole.CUSTOMER) {
-            JsonUtil.fail(resp, 401, "Customer login required");
+        if (u == null) {
+            JsonUtil.fail(resp, 401, "Login required");
             return;
         }
         String path = req.getPathInfo() == null ? "" : req.getPathInfo();
         JsonObject body = read(req);
         try {
+            if (path.startsWith("/manager/update/")) {
+                if (!SessionHelper.hasRole(u, UserRole.MANAGER, UserRole.ADMIN)) {
+                    JsonUtil.fail(resp, 403, "Manager only");
+                    return;
+                }
+                int id = Integer.parseInt(path.substring("/manager/update/".length()));
+                JsonUtil.ok(resp, service.updateByManager(
+                        id,
+                        body.get("rating").getAsInt(),
+                        body.has("comment") && !body.get("comment").isJsonNull()
+                                ? body.get("comment").getAsString() : null));
+                return;
+            }
             if (path.startsWith("/update/")) {
+                if (u.getRole() != UserRole.CUSTOMER) {
+                    JsonUtil.fail(resp, 403, "Customer only");
+                    return;
+                }
                 int id = Integer.parseInt(path.substring("/update/".length()));
                 JsonUtil.ok(resp, service.update(
                         u.getUserId(),
@@ -70,6 +95,10 @@ public class FeedbackApiServlet extends HttpServlet {
                 return;
             }
             if (path.isEmpty() || "/".equals(path) || "/create".equals(path)) {
+                if (u.getRole() != UserRole.CUSTOMER) {
+                    JsonUtil.fail(resp, 403, "Customer only");
+                    return;
+                }
                 FeedbackEntity e = service.submit(
                         u.getUserId(),
                         body.get("reservationId").getAsInt(),
@@ -93,15 +122,24 @@ public class FeedbackApiServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         User u = SessionHelper.requireUser(req);
-        if (u == null || u.getRole() != UserRole.CUSTOMER) {
-            JsonUtil.fail(resp, 401, "Customer login required");
+        if (u == null) {
+            JsonUtil.fail(resp, 401, "Login required");
             return;
         }
         String path = req.getPathInfo() == null ? "" : req.getPathInfo();
         if (path.startsWith("/")) {
             try {
                 int id = Integer.parseInt(path.substring(1));
-                if (!service.delete(u.getUserId(), id)) {
+                boolean ok;
+                if (SessionHelper.hasRole(u, UserRole.MANAGER, UserRole.ADMIN)) {
+                    ok = service.deleteByManager(id);
+                } else if (u.getRole() == UserRole.CUSTOMER) {
+                    ok = service.delete(u.getUserId(), id);
+                } else {
+                    JsonUtil.fail(resp, 403, "Not allowed");
+                    return;
+                }
+                if (!ok) {
                     JsonUtil.fail(resp, 404, "Feedback not found");
                     return;
                 }

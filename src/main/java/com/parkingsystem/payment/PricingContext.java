@@ -12,6 +12,8 @@ public class PricingContext {
     private String vehicleType;
     private int loyaltyPointsToRedeem;
     private BigDecimal hours;
+    /** Optional bay-level pricing key from slots.rate_strategy_key */
+    private String rateStrategyKey;
 
     public BigDecimal getBaseRatePerHour() {
         return baseRatePerHour;
@@ -67,5 +69,13 @@ public class PricingContext {
 
     public void setHours(BigDecimal hours) {
         this.hours = hours;
+    }
+
+    public String getRateStrategyKey() {
+        return rateStrategyKey;
+    }
+
+    public void setRateStrategyKey(String rateStrategyKey) {
+        this.rateStrategyKey = rateStrategyKey;
     }
 }

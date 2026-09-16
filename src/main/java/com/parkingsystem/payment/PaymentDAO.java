@@ -69,6 +69,21 @@ public class PaymentDAO {
         }
     }
 
+    public List<Payment> listAll() {
+        String sql = "SELECT * FROM payments ORDER BY COALESCE(paid_at, payment_id) DESC";
+        List<Payment> list = new ArrayList<>();
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(map(rs));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("payment list failed", e);
+        }
+        return list;
+    }
+
     public List<Payment> listPaid() {
         String sql = "SELECT * FROM payments WHERE status = 'PAID' ORDER BY paid_at DESC";
         List<Payment> list = new ArrayList<>();

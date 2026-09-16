@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS loyalty_config (
     config_value VARCHAR(80) NOT NULL
 );
 
+-- Strategy keys, slot rate_strategy_key, feedback edit history: see patch_strategy_keys_feedback.sql
+
 INSERT IGNORE INTO loyalty_config (config_key, config_value) VALUES
 ('earn_lkr_per_point', '50'),
 ('redeem_points_per_lkr', '10'),
