@@ -1,267 +1,432 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Customer — parkED</title>
-  <link rel="stylesheet" href="css/app.css?v=11" />
-  <link rel="stylesheet" href="css/live-map.css?v=1" />
-  <script src="js/loader.js?v=9"></script>
-</head>
-<body>
-  <div class="shell">
-    <aside class="sidebar" data-reveal>
-      <div class="brand">park<em>ED</em></div>
-      <nav class="side-nav">
-        <a href="#map" class="active" data-tab="map">Live map</a>
-        <a href="#bookings" data-tab="bookings">Bookings</a>
-        <a href="#pay" data-tab="pay">Payment</a>
-        <a href="#loyalty" data-tab="loyalty">Loyalty</a>
-        <a href="#feedback" data-tab="feedback">Feedback</a>
-        <a href="#inq" data-tab="inq">Inquiries</a>
-      </nav>
-      <div class="side-foot">
-        <div class="text-sm" id="who"></div>
-        <button class="btn btn-outline btn-sm" type="button" onclick="logout()">Sign out</button>
-      </div>
-    </aside>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customer @ parkED</title>
+    <link rel="stylesheet" href="css/app.css?v=15" />
+    <link rel="stylesheet" href="css/live-map.css?v=2" />
+    <script src="js/loader.js?v=9"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" data-reveal>
+        <div class="brand">park<em>ED</em></div>
+        <nav class="side-nav">
+          <a href="#map" class="active" data-tab="map">Live map</a>
+          <a href="#bookings" data-tab="bookings">Bookings</a>
+          <a href="#pay" data-tab="pay">Payment</a>
+          <a href="#loyalty" data-tab="loyalty">Loyalty</a>
+          <a href="#feedback" data-tab="feedback">Feedback</a>
+          <a href="#inq" data-tab="inq">Inquiries</a>
+        </nav>
+        <div class="side-foot">
+          <div class="text-sm" id="who"></div>
+          <button
+            class="btn btn-outline btn-sm"
+            type="button"
+            onclick="logout()"
+          >
+            Sign out
+          </button>
+        </div>
+      </aside>
 
-    <div class="main">
-      <div id="msg" hidden></div>
+      <div class="main">
+        <div id="msg" hidden></div>
 
-      <section id="sec-map" class="card sam-map-shell" style="padding:1.15rem">
-        <div class="sam-head">
-          <div>
-            <div class="sam-live"><span class="sam-dot"></span> LIVE</div>
-            <h2 class="sam-title">Slot Availability Map</h2>
-            <p class="sam-sub">Pick an open bay, then book on the right.</p>
-          </div>
-          <div class="sam-clock-wrap">
+        <section
+          id="sec-map"
+          class="card sam-map-shell"
+          style="padding: 1.15rem"
+        >
+          <div class="sam-head">
             <div>
-              <div class="sam-clock" id="samClock">--:--:--</div>
-              <div class="sam-date" id="samDate"></div>
+              <div class="sam-live"><span class="sam-dot"></span> LIVE</div>
+              <h2 class="sam-title">Slot Availability Map</h2>
+              <p class="sam-sub">Pick an open bay, then book on the right.</p>
             </div>
-            <button class="sam-refresh" id="btnRefresh" type="button" aria-label="Refresh map">
-              <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M20 12a8 8 0 10-2.3 5.6M20 12V7m0 5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="sam-clock-wrap">
+              <div>
+                <div class="sam-clock" id="samClock">--:--:--</div>
+                <div class="sam-date" id="samDate"></div>
+              </div>
+              <button
+                class="sam-refresh"
+                id="btnRefresh"
+                type="button"
+                aria-label="Refresh map"
+              >
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                  <path
+                    d="M20 12a8 8 0 10-2.3 5.6M20 12V7m0 5h-5"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="sam-toolbar">
+            <div class="sam-counts">
+              <button
+                class="sam-count is-lime"
+                data-filter="open"
+                type="button"
+              >
+                <b id="cOpen">–</b> Available
+              </button>
+              <button class="sam-count" data-filter="reserved" type="button">
+                <b id="cRes">–</b> Reserved
+              </button>
+              <button class="sam-count" data-filter="occupied" type="button">
+                <b id="cOcc">–</b> Occupied
+              </button>
+              <button class="sam-count" data-filter="maint" type="button">
+                <b id="cMaint">–</b> Maintenance
+              </button>
+            </div>
+            <div class="sam-cap">
+              <span id="samFreePct">—% free</span>
+              <div class="sam-cap-bar">
+                <i id="samFreeBar" style="width: 0%"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="sam-filters">
+            <button class="sam-filter active" data-filter="all" type="button">
+              All Slots
+            </button>
+            <button class="sam-filter" data-filter="open" type="button">
+              Open
+            </button>
+            <button class="sam-filter" data-filter="reserved" type="button">
+              Reserved
+            </button>
+            <button class="sam-filter" data-filter="occupied" type="button">
+              Occupied
+            </button>
+            <button class="sam-filter" data-filter="maint" type="button">
+              Maintenance
             </button>
           </div>
-        </div>
 
-        <div class="sam-toolbar">
-          <div class="sam-counts">
-            <button class="sam-count is-lime" data-filter="open" type="button"><b id="cOpen">–</b> Available</button>
-            <button class="sam-count" data-filter="reserved" type="button"><b id="cRes">–</b> Reserved</button>
-            <button class="sam-count" data-filter="occupied" type="button"><b id="cOcc">–</b> Occupied</button>
-            <button class="sam-count" data-filter="maint" type="button"><b id="cMaint">–</b> Maintenance</button>
-          </div>
-          <div class="sam-cap">
-            <span id="samFreePct">—% free</span>
-            <div class="sam-cap-bar"><i id="samFreeBar" style="width:0%"></i></div>
-          </div>
-        </div>
-
-        <div class="sam-filters">
-          <button class="sam-filter active" data-filter="all" type="button">All Slots</button>
-          <button class="sam-filter" data-filter="open" type="button">Open</button>
-          <button class="sam-filter" data-filter="reserved" type="button">Reserved</button>
-          <button class="sam-filter" data-filter="occupied" type="button">Occupied</button>
-          <button class="sam-filter" data-filter="maint" type="button">Maintenance</button>
-        </div>
-
-        <div class="grid-2">
-          <div>
-            <div class="field" style="margin-bottom:0.75rem">
-              <label for="typeFilter">Bay type</label>
-              <select id="typeFilter">
-                <option value="ALL">All</option>
-                <option>STANDARD</option>
-                <option>EV</option>
-                <option>ACCESSIBLE</option>
-                <option>COVERED</option>
-              </select>
+          <div class="grid-2">
+            <div>
+              <div class="field" style="margin-bottom: 0.75rem">
+                <label for="typeFilter">Bay type</label>
+                <select id="typeFilter">
+                  <option value="ALL">All</option>
+                  <option>STANDARD</option>
+                  <option>EV</option>
+                  <option>ACCESSIBLE</option>
+                  <option>COVERED</option>
+                </select>
+              </div>
+              <div class="sam-floors" id="mapRoot">
+                <p class="text-muted text-sm">Loading live bays…</p>
+              </div>
             </div>
-            <div class="sam-floors" id="mapRoot">
-              <p class="text-muted text-sm">Loading live bays…</p>
-            </div>
-          </div>
-          <div class="card" style="box-shadow:none;margin:0;background:#fff">
-            <h3>New reservation</h3>
-            <p id="picked" class="text-muted text-sm" style="margin:0.5rem 0 1rem">No slot selected</p>
-            <div class="field">
-              <label for="vehicleId">Vehicle</label>
-              <select id="vehicleId"></select>
-            </div>
-            <div class="field">
-              <label for="startTime">Start</label>
-              <input id="startTime" type="datetime-local" />
-            </div>
-            <div class="field">
-              <label for="endTime">End</label>
-              <input id="endTime" type="datetime-local" />
-            </div>
-            <button class="btn btn-accent btn-block" id="btnBook" type="button">Book slot</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="sec-bookings" class="card" hidden>
-        <div class="card-header">
-          <h2 class="card-title">My bookings</h2>
-          <p class="text-muted text-sm">Active, past, and cancelled reservations.</p>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>ID</th><th>Slot</th><th>Start</th><th>End</th><th>Status</th><th>Token</th><th></th></tr>
-            </thead>
-            <tbody id="bookBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="sec-pay" class="card" hidden>
-        <div class="card-header">
-          <h2 class="card-title">Payment</h2>
-          <p class="text-muted text-sm">Peak-hour rates, slot discounts, and loyalty redemption (LKR).</p>
-        </div>
-        <div id="rateInfoBox" class="text-sm text-muted" style="margin-bottom:1rem;padding:0.85rem;background:#f6f4ee;border-radius:1rem"></div>
-        <div class="grid-2">
-          <div>
-            <div class="field">
-              <label for="payResId">Reservation ID</label>
-              <input id="payResId" type="number" />
-            </div>
-            <div class="field">
-              <label for="payPts">Loyalty points to redeem</label>
-              <input id="payPts" type="number" value="0" />
-            </div>
-            <div class="row">
-              <button class="btn btn-secondary" id="btnQuote" type="button">Get quote</button>
-              <button class="btn btn-accent" id="btnPay" type="button">Pay now</button>
+            <div
+              class="card"
+              style="box-shadow: none; margin: 0; background: #fff"
+            >
+              <h3>New reservation</h3>
+              <p
+                id="picked"
+                class="text-muted text-sm"
+                style="margin: 0.5rem 0 1rem"
+              >
+                No slot selected
+              </p>
+              <div class="field">
+                <label for="vehicleId">Vehicle</label>
+                <select id="vehicleId"></select>
+              </div>
+              <div class="field">
+                <label>Start</label>
+                <div class="time-pick">
+                  <input id="startDate" type="date" aria-label="Start date" />
+                  <select id="startHour" aria-label="Start hour"></select>
+                  <select id="startMin" aria-label="Start minute"></select>
+                  <select id="startAmpm" aria-label="Start AM or PM"></select>
+                </div>
+                <input id="startTime" type="hidden" />
+              </div>
+              <div class="field">
+                <label>End</label>
+                <div class="time-pick">
+                  <input id="endDate" type="date" aria-label="End date" />
+                  <select id="endHour" aria-label="End hour"></select>
+                  <select id="endMin" aria-label="End minute"></select>
+                  <select id="endAmpm" aria-label="End AM or PM"></select>
+                </div>
+                <input id="endTime" type="hidden" />
+              </div>
+              <p class="text-muted text-sm" style="margin: -0.2rem 0 0.8rem">
+                Past dates, hours, and minutes are greyed out and cannot be selected. End must be after start.
+              </p>
+              <button
+                class="btn btn-accent btn-block"
+                id="btnBook"
+                type="button"
+              >
+                Book slot
+              </button>
             </div>
           </div>
-          <pre class="quote" id="quoteBox">Quote breakdown appears here</pre>
-        </div>
-        <h3 style="margin:1.25rem 0 0.5rem;font-size:1rem">My payments</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Invoice</th><th>Reservation</th><th>Amount</th><th>Status</th><th>Strategy</th></tr></thead>
-            <tbody id="payHist"></tbody>
-          </table>
-        </div>
-      </section>
+        </section>
 
-      <section id="sec-loyalty" class="card" hidden>
-        <div class="card-header">
-          <h2 class="card-title">Loyalty</h2>
-          <p class="text-muted text-sm">Points, tier, refunds, and ledger.</p>
-        </div>
-        <div id="loyBox" class="stack"></div>
-        <div class="row" style="margin:1rem 0">
-          <button class="btn btn-outline" id="btnEnroll" type="button">Enroll</button>
-          <button class="btn btn-outline" id="btnUnenroll" type="button">Leave program</button>
-        </div>
-        <h3 style="font-size:1rem;margin-bottom:0.5rem">Payment &amp; refund status</h3>
-        <p class="text-muted text-sm" style="margin-bottom:0.5rem">Shows PAID / REFUNDED — loyalty ADJUST rows follow refunds.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Invoice</th><th>Reservation</th><th>LKR</th><th>Status</th></tr></thead>
-            <tbody id="loyPayStatus"></tbody>
-          </table>
-        </div>
-        <h3 style="font-size:1rem;margin:1rem 0 0.5rem">Points history</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>When</th><th>Type</th><th>Points</th><th>Ref</th></tr></thead>
-            <tbody id="loyHist"></tbody>
-          </table>
-        </div>
-      </section>
+        <section id="sec-bookings" class="card" hidden>
+          <div class="card-header">
+            <h2 class="card-title">My bookings</h2>
+            <p class="text-muted text-sm">
+              Active, past, and cancelled reservations.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Slot</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Status</th>
+                  <th>Token</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="bookBody"></tbody>
+            </table>
+          </div>
+        </section>
 
-      <section id="sec-feedback" class="card" hidden>
-        <div class="card-header">
-          <h2 class="card-title">Feedback</h2>
-          <p class="text-muted text-sm">Rate a completed visit (1–5).</p>
-        </div>
-        <div class="field">
-          <label for="fbRes">Completed reservation ID</label>
-          <input id="fbRes" type="number" />
-        </div>
-        <div class="field">
-          <label for="fbRating">Rating</label>
-          <input id="fbRating" type="number" min="1" max="5" value="5" />
-        </div>
-        <div class="field">
-          <label for="fbType">Type</label>
-          <select id="fbType">
-            <option>RATING_ONLY</option>
-            <option>RATING_WITH_COMMENT</option>
-            <option>FACILITY_REVIEW</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="fbComment">Comment</label>
-          <textarea id="fbComment"></textarea>
-        </div>
-        <button class="btn btn-accent" id="btnFb" type="button">Submit feedback</button>
-        <h3 style="margin:1.25rem 0 0.5rem;font-size:1rem">My reviews &amp; ratings</h3>
-        <p class="text-muted text-sm" style="margin-bottom:0.5rem">After a visit is <strong>COMPLETED</strong>, submit feedback here. Edits keep the original on file.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>ID</th><th>Res</th><th>Current</th><th>Original</th><th>Status</th><th></th></tr></thead>
-            <tbody id="fbMine"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="sec-inq" class="card inq-page" hidden>
-        <div class="card-header">
-          <h2 class="card-title">Inquiries</h2>
-          <p class="text-muted text-sm">Open a ticket, then select <strong>View conversation</strong> to see staff replies.</p>
-        </div>
-
-        <div class="table-wrap inq-table-wrap">
-          <table>
-            <thead>
-              <tr><th>Ref</th><th>Subject</th><th>Category</th><th>Status</th><th></th></tr>
-            </thead>
-            <tbody id="inqBody"></tbody>
-          </table>
-        </div>
-
-        <div class="inq-split">
-          <div class="inq-panel">
-            <h3 class="inq-panel-title">New ticket</h3>
-            <div class="field">
-              <label for="inqCat">Category</label>
-              <select id="inqCat">
-                <option>BOOKING</option><option>PAYMENT</option><option>LOYALTY</option>
-                <option>MAP_SLOT</option><option>GENERAL</option>
-              </select>
+        <section id="sec-pay" class="card" hidden>
+          <div class="card-header">
+            <h2 class="card-title">Payment</h2>
+            <p class="text-muted text-sm">
+              Peak-hour rates, slot discounts, and loyalty redemption (LKR).
+            </p>
+          </div>
+          <div
+            id="rateInfoBox"
+            class="result-panel"
+            style="margin-bottom: 1rem"
+          ></div>
+          <div class="grid-2">
+            <div>
+              <div class="field">
+                <label for="payResId">Reservation ID</label>
+                <input id="payResId" type="number" />
+              </div>
+              <div class="field">
+                <label for="payPts">Loyalty points to redeem</label>
+                <input id="payPts" type="number" value="0" />
+              </div>
+              <div class="row">
+                <button class="btn btn-secondary" id="btnQuote" type="button">
+                  Get quote
+                </button>
+                <button class="btn btn-accent" id="btnPay" type="button">
+                  Pay now
+                </button>
+              </div>
             </div>
-            <div class="field">
-              <label for="inqSub">Subject</label>
-              <input id="inqSub" />
+            <div class="result-panel" id="quoteBox">
+              <div class="result-empty">Get a quote to see the fee breakdown</div>
             </div>
-            <div class="field">
-              <label for="inqDesc">Description</label>
-              <textarea id="inqDesc" rows="5"></textarea>
-            </div>
-            <button class="btn btn-accent btn-block" id="btnInq" type="button">Open ticket</button>
+          </div>
+          <h3 style="margin: 1.25rem 0 0.5rem; font-size: 1rem">My payments</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Reservation</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Strategy</th>
+                </tr>
+              </thead>
+              <tbody id="payHist"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="sec-loyalty" class="card" hidden>
+          <div class="card-header">
+            <h2 class="card-title">Loyalty</h2>
+            <p class="text-muted text-sm">Points, tier, refunds, and ledger.</p>
+          </div>
+          <div id="loyBox" class="stack"></div>
+          <div class="row" style="margin: 1rem 0">
+            <button class="btn btn-outline" id="btnEnroll" type="button">
+              Enroll
+            </button>
+            <button class="btn btn-outline" id="btnUnenroll" type="button">
+              Leave program
+            </button>
+          </div>
+          <h3 style="font-size: 1rem; margin-bottom: 0.5rem">
+            Payment &amp; refund status
+          </h3>
+          <p class="text-muted text-sm" style="margin-bottom: 0.5rem">
+            Shows PAID / REFUNDED — loyalty ADJUST rows follow refunds.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Reservation</th>
+                  <th>LKR</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="loyPayStatus"></tbody>
+            </table>
+          </div>
+          <h3 style="font-size: 1rem; margin: 1rem 0 0.5rem">Points history</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>Type</th>
+                  <th>Points</th>
+                  <th>Ref</th>
+                </tr>
+              </thead>
+              <tbody id="loyHist"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="sec-feedback" class="card" hidden>
+          <div class="card-header">
+            <h2 class="card-title">Feedback</h2>
+            <p class="text-muted text-sm">Rate a completed visit (1–5).</p>
+          </div>
+          <div class="field">
+            <label for="fbRes">Completed reservation ID</label>
+            <input id="fbRes" type="number" />
+          </div>
+          <div class="field">
+            <label for="fbRating">Rating</label>
+            <input id="fbRating" type="number" min="1" max="5" value="5" />
+          </div>
+          <div class="field">
+            <label for="fbType">Type</label>
+            <select id="fbType">
+              <option>RATING_ONLY</option>
+              <option>RATING_WITH_COMMENT</option>
+              <option>FACILITY_REVIEW</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fbComment">Comment</label>
+            <textarea id="fbComment"></textarea>
+          </div>
+          <button class="btn btn-accent" id="btnFb" type="button">
+            Submit feedback
+          </button>
+          <h3 style="margin: 1.25rem 0 0.5rem; font-size: 1rem">
+            My reviews &amp; ratings
+          </h3>
+          <p class="text-muted text-sm" style="margin-bottom: 0.5rem">
+            After a visit is <strong>COMPLETED</strong>, submit feedback here.
+            Edits keep the original on file.
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Res</th>
+                  <th>Current</th>
+                  <th>Original</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="fbMine"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="sec-inq" class="card inq-page" hidden>
+          <div class="card-header">
+            <h2 class="card-title">Inquiries</h2>
+            <p class="text-muted text-sm">
+              Open a ticket, then select <strong>View conversation</strong> to
+              see staff replies.
+            </p>
           </div>
 
-          <div class="inq-panel inq-thread-panel">
-            <h3 class="inq-panel-title" id="inqThreadTitle">Conversation</h3>
-            <p class="text-muted text-sm" id="inqThreadHint">Choose a ticket from the table above.</p>
-            <div id="inqThread" class="inq-thread"></div>
+          <div class="table-wrap inq-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ref</th>
+                  <th>Subject</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="inqBody"></tbody>
+            </table>
           </div>
-        </div>
-      </section>
+
+          <div class="inq-split">
+            <div class="inq-panel">
+              <h3 class="inq-panel-title">New ticket</h3>
+              <div class="field">
+                <label for="inqCat">Category</label>
+                <select id="inqCat">
+                  <option>BOOKING</option>
+                  <option>PAYMENT</option>
+                  <option>LOYALTY</option>
+                  <option>MAP_SLOT</option>
+                  <option>GENERAL</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="inqSub">Subject</label>
+                <input id="inqSub" />
+              </div>
+              <div class="field">
+                <label for="inqDesc">Description</label>
+                <textarea id="inqDesc" rows="5"></textarea>
+              </div>
+              <button
+                class="btn btn-accent btn-block"
+                id="btnInq"
+                type="button"
+              >
+                Open ticket
+              </button>
+            </div>
+
+            <div class="inq-panel inq-thread-panel">
+              <h3 class="inq-panel-title" id="inqThreadTitle">Conversation</h3>
+              <p class="text-muted text-sm" id="inqThreadHint">
+                Choose a ticket from the table above.
+              </p>
+              <div id="inqThread" class="inq-thread"></div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
-  </div>
 
-  <script src="js/api.js?v=10"></script>
-  <script src="js/live-map.js?v=4"></script>
-  <script src="js/customer.js?v=14"></script>
-</body>
+    <script src="js/api.js?v=13"></script>
+    <script src="js/live-map.js?v=6"></script>
+    <script src="js/customer.js?v=18"></script>
+  </body>
 </html>

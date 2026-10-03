@@ -30,6 +30,7 @@ public class PricingEngine {
 
         BigDecimal base = ctx.getBaseRatePerHour().multiply(hours).setScale(2, RoundingMode.HALF_UP);
         BigDecimal running = base;
+        BigDecimal discounts = BigDecimal.ZERO;
         List<String> applied = new ArrayList<>();
         applied.add("Base " + hours + "h @ LKR " + ctx.getBaseRatePerHour());
 
@@ -37,6 +38,9 @@ public class PricingEngine {
             BigDecimal before = running;
             running = s.apply(running, ctx);
             if (before.compareTo(running) != 0) {
+                if (running.compareTo(before) < 0) {
+                    discounts = discounts.add(before.subtract(running));
+                }
                 String line = s.description();
                 if (s instanceof SlotAssignedStrategy && ctx.getRateStrategyKey() != null) {
                     line = "Bay key " + ctx.getRateStrategyKey() + " (" + line + ")";
@@ -48,7 +52,7 @@ public class PricingEngine {
         QuoteResult q = new QuoteResult();
         q.setBaseAmount(base);
         q.setFinalAmount(running);
-        q.setDiscountAmount(base.subtract(running).max(BigDecimal.ZERO));
+        q.setDiscountAmount(discounts.setScale(2, RoundingMode.HALF_UP));
         q.setBreakdown(applied);
         q.setStrategiesUsed(String.join(", ", applied));
         return q;

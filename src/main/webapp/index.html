@@ -1,379 +1,639 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>parkED — Automated Parking Reservation</title>
-  <link rel="stylesheet" href="css/app.css?v=9" />
-  <link rel="stylesheet" href="css/landing.css?v=11" />
-  <link rel="stylesheet" href="css/live-map.css?v=1" />
-  <script src="js/loader.js?v=9"></script>
-</head>
-<body class="landing">
-  <div class="lp-frame">
-    <div class="lp-shell">
-      <header class="lp-header" id="lpHeader">
-        <a class="lp-logo" href="index.html">
-          <span class="lp-logo-mark"><i></i></span>
-          park<em>ED</em>
-        </a>
-        <nav class="lp-nav">
-          <a href="#benefits">Benefits</a>
-          <a href="#flow">Flow</a>
-          <a href="#features">Features</a>
-          <a href="#voices">Voices</a>
-          <a href="#for-you">For you</a>
-        </nav>
-        <div style="display:flex;gap:0.55rem;align-items:center">
-          <a class="lp-btn lp-btn-ghost lp-signin-desktop" href="login.html">Sign in</a>
-          <button class="lp-menu-btn" id="lpMenu" type="button" aria-label="Open menu">
-            <span class="dots"><span></span><span></span><span></span><span></span></span>
-          </button>
-        </div>
-      </header>
-
-      <section class="lp-hero" id="top">
-        <div class="lp-hero-top">
-          <h1 class="lp-h1" data-split>
-            Your <span class="accent-word">Ultimate<svg class="scribble" viewBox="0 0 200 36" preserveAspectRatio="none" aria-hidden="true"><path d="M6 22 C 40 6, 70 30, 100 16 S 160 4, 194 20" /></svg></span><br />
-            Parking Solution
-          </h1>
-          <div class="lp-hero-right" data-reveal>
-            <div class="lp-hero-icons" aria-label="Key features">
-              <div class="lp-hero-icon" title="Live map">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M9 4.5L4 6.5v13l5-2 6 2 5-2v-13l-5 2-6-2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-                  <path d="M9 4.5v13M15 6.5v13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="lp-hero-icon" title="Reserve">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <rect x="4" y="5" width="16" height="15" rx="2.5" stroke="currentColor" stroke-width="1.7"/>
-                  <path d="M8 3.5v3M16 3.5v3M4 10h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                  <path d="M9.5 14.5l1.8 1.8 3.6-3.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <div class="lp-hero-icon" title="Pay">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <rect x="3" y="6" width="18" height="12" rx="2.5" stroke="currentColor" stroke-width="1.7"/>
-                  <path d="M3 10h18" stroke="currentColor" stroke-width="1.7"/>
-                  <path d="M7 15h3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                </svg>
-              </div>
-            </div>
-            <p class="lp-hero-sub">Live map, reserve, pay, earn loyalty — parking made simple before you arrive.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>parkED Automated Parking Reservation</title>
+    <link rel="stylesheet" href="css/app.css?v=13" />
+    <link rel="stylesheet" href="css/landing.css?v=11" />
+    <link rel="stylesheet" href="css/live-map.css?v=2" />
+    <script src="js/loader.js?v=9"></script>
+  </head>
+  <body class="landing">
+    <div class="lp-frame">
+      <div class="lp-shell">
+        <header class="lp-header" id="lpHeader">
+          <a class="lp-logo" href="index.html">
+            <span class="lp-logo-mark"><i></i></span>
+            park<em>ED</em>
+          </a>
+          <nav class="lp-nav">
+            <a href="#benefits">Benefits</a>
+            <a href="#flow">Flow</a>
+            <a href="#features">Features</a>
+            <a href="#voices">Voices</a>
+            <a href="#for-you">For you</a>
+          </nav>
+          <div style="display: flex; gap: 0.55rem; align-items: center">
+            <a class="lp-btn lp-btn-ghost lp-signin-desktop" href="login.html"
+              >Sign in</a
+            >
+            <button
+              class="lp-menu-btn"
+              id="lpMenu"
+              type="button"
+              aria-label="Open menu"
+            >
+              <span class="dots"
+                ><span></span><span></span><span></span><span></span
+              ></span>
+            </button>
           </div>
-        </div>
+        </header>
 
-        <div class="lp-avail" data-reveal id="slotMap">
-          <div class="sam-head">
-            <div>
-              <div class="sam-live"><span class="sam-dot"></span> LIVE</div>
-              <h2 class="sam-title">Slot Availability Map</h2>
-              <p class="sam-sub">Real-time bay status · Ground &amp; Level 1</p>
-            </div>
-            <div class="sam-clock-wrap">
-              <div>
-                <div class="sam-clock" id="samClock">--:--:--</div>
-                <div class="sam-date" id="samDate"></div>
+        <section class="lp-hero" id="top">
+          <div class="lp-hero-top">
+            <h1 class="lp-h1" data-split>
+              Your
+              <span class="accent-word"
+                >Ultimate<svg
+                  class="scribble"
+                  viewBox="0 0 200 36"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M6 22 C 40 6, 70 30, 100 16 S 160 4, 194 20"
+                  /></svg></span
+              ><br />
+              Parking Solution
+            </h1>
+            <div class="lp-hero-right" data-reveal>
+              <div class="lp-hero-icons" aria-label="Key features">
+                <div class="lp-hero-icon" title="Live map">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="M9 4.5L4 6.5v13l5-2 6 2 5-2v-13l-5 2-6-2z"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M9 4.5v13M15 6.5v13"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
+                <div class="lp-hero-icon" title="Reserve">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect
+                      x="4"
+                      y="5"
+                      width="16"
+                      height="15"
+                      rx="2.5"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                    <path
+                      d="M8 3.5v3M16 3.5v3M4 10h16"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M9.5 14.5l1.8 1.8 3.6-3.8"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="lp-hero-icon" title="Pay">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect
+                      x="3"
+                      y="6"
+                      width="18"
+                      height="12"
+                      rx="2.5"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                    <path
+                      d="M3 10h18"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                    />
+                    <path
+                      d="M7 15h3.5"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </div>
               </div>
-              <button class="sam-refresh" id="samRefresh" type="button" aria-label="Refresh map">
-                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M20 12a8 8 0 10-2.3 5.6M20 12V7m0 5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <p class="lp-hero-sub">
+                Live map, reserve, pay, earn loyalty — parking made simple
+                before you arrive.
+              </p>
+            </div>
+          </div>
+
+          <div class="lp-avail" data-reveal id="slotMap">
+            <div class="sam-head">
+              <div>
+                <div class="sam-live"><span class="sam-dot"></span> LIVE</div>
+                <h2 class="sam-title">Slot Availability Map</h2>
+                <p class="sam-sub">
+                  Real-time bay status · Ground &amp; Level 1
+                </p>
+              </div>
+              <div class="sam-clock-wrap">
+                <div>
+                  <div class="sam-clock" id="samClock">--:--:--</div>
+                  <div class="sam-date" id="samDate"></div>
+                </div>
+                <button
+                  class="sam-refresh"
+                  id="samRefresh"
+                  type="button"
+                  aria-label="Refresh map"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                    <path
+                      d="M20 12a8 8 0 10-2.3 5.6M20 12V7m0 5h-5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="sam-toolbar">
+              <div class="sam-counts" id="samCounts">
+                <button
+                  class="sam-count is-lime"
+                  data-filter="open"
+                  type="button"
+                >
+                  <b id="cOpen">–</b> Available
+                </button>
+                <button class="sam-count" data-filter="reserved" type="button">
+                  <b id="cRes">–</b> Reserved
+                </button>
+                <button class="sam-count" data-filter="occupied" type="button">
+                  <b id="cOcc">–</b> Occupied
+                </button>
+                <button class="sam-count" data-filter="maint" type="button">
+                  <b id="cMaint">–</b> Maintenance
+                </button>
+              </div>
+              <div class="sam-cap">
+                <span id="samFreePct">—% free</span>
+                <div class="sam-cap-bar">
+                  <i id="samFreeBar" style="width: 0%"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="sam-filters" id="samFilters">
+              <button class="sam-filter active" data-filter="all" type="button">
+                All Slots
+              </button>
+              <button class="sam-filter" data-filter="open" type="button">
+                Open
+              </button>
+              <button class="sam-filter" data-filter="reserved" type="button">
+                Reserved
+              </button>
+              <button class="sam-filter" data-filter="occupied" type="button">
+                Occupied
+              </button>
+              <button class="sam-filter" data-filter="maint" type="button">
+                Maintenance
               </button>
             </div>
-          </div>
 
-          <div class="sam-toolbar">
-            <div class="sam-counts" id="samCounts">
-              <button class="sam-count is-lime" data-filter="open" type="button"><b id="cOpen">–</b> Available</button>
-              <button class="sam-count" data-filter="reserved" type="button"><b id="cRes">–</b> Reserved</button>
-              <button class="sam-count" data-filter="occupied" type="button"><b id="cOcc">–</b> Occupied</button>
-              <button class="sam-count" data-filter="maint" type="button"><b id="cMaint">–</b> Maintenance</button>
-            </div>
-            <div class="sam-cap">
-              <span id="samFreePct">—% free</span>
-              <div class="sam-cap-bar"><i id="samFreeBar" style="width:0%"></i></div>
+            <div class="lp-avail-floors sam-floors" id="samFloors">
+              <p class="text-muted text-sm">Loading live bays…</p>
             </div>
           </div>
+        </section>
 
-          <div class="sam-filters" id="samFilters">
-            <button class="sam-filter active" data-filter="all" type="button">All Slots</button>
-            <button class="sam-filter" data-filter="open" type="button">Open</button>
-            <button class="sam-filter" data-filter="reserved" type="button">Reserved</button>
-            <button class="sam-filter" data-filter="occupied" type="button">Occupied</button>
-            <button class="sam-filter" data-filter="maint" type="button">Maintenance</button>
+        <section class="lp-section" id="benefits">
+          <div class="lp-split">
+            <div data-reveal>
+              <div class="lp-section-label">Benefits</div>
+              <h2 class="lp-title" data-split>Parking without the guesswork</h2>
+              <p class="lp-lead">
+                See free bays, lock a slot, pay online, and walk in with a token
+                — one calm flow for drivers.
+              </p>
+            </div>
+            <div class="lp-stats" data-reveal style="--d: 120ms">
+              <div class="lp-stat-card">
+                <div class="num"><span data-count="92">0</span>%</div>
+                <p>Faster bay discovery with live map</p>
+              </div>
+              <div class="lp-stat-card">
+                <div class="num"><span data-count="99">0</span>%</div>
+                <p>Secure sign-in for your bookings</p>
+              </div>
+              <div class="lp-stat-card">
+                <div class="num"><span data-count="3">0</span></div>
+                <p>Steps to reserve — map, book, pay</p>
+              </div>
+            </div>
           </div>
+        </section>
 
-          <div class="lp-avail-floors sam-floors" id="samFloors">
-            <p class="text-muted text-sm">Loading live bays…</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="lp-section" id="benefits">
-        <div class="lp-split">
+        <section class="lp-section" id="flow" style="padding-top: 0">
           <div data-reveal>
-            <div class="lp-section-label">Benefits</div>
-            <h2 class="lp-title" data-split>Parking without the guesswork</h2>
-            <p class="lp-lead">See free bays, lock a slot, pay online, and walk in with a token — one calm flow for drivers.</p>
+            <div class="lp-section-label">Flow</div>
+            <h2 class="lp-title" data-split>Craft a calm parking journey</h2>
+            <p class="lp-lead">
+              Three clear steps — map, reserve, pay — then arrive and rate your
+              visit.
+            </p>
           </div>
-          <div class="lp-stats" data-reveal style="--d:120ms">
-            <div class="lp-stat-card">
-              <div class="num"><span data-count="92">0</span>%</div>
-              <p>Faster bay discovery with live map</p>
-            </div>
-            <div class="lp-stat-card">
-              <div class="num"><span data-count="99">0</span>%</div>
-              <p>Secure sign-in for your bookings</p>
-            </div>
-            <div class="lp-stat-card">
-              <div class="num"><span data-count="3">0</span></div>
-              <p>Steps to reserve — map, book, pay</p>
-            </div>
+          <div class="lp-steps">
+            <article class="lp-step" data-reveal style="--d: 40ms">
+              <div class="lp-step-no">01</div>
+              <h3>See live bays</h3>
+              <p>
+                Color-coded availability across floors. Filter EV, accessible,
+                and covered spots instantly.
+              </p>
+            </article>
+            <article class="lp-step" data-reveal style="--d: 100ms">
+              <div class="lp-step-no">02</div>
+              <h3>Lock &amp; book</h3>
+              <p>
+                Temporary slot locks stop double booking while your reservation
+                stays confirmed.
+              </p>
+            </article>
+            <article class="lp-step" data-reveal style="--d: 160ms">
+              <div class="lp-step-no">03</div>
+              <h3>Pay &amp; arrive</h3>
+              <p>
+                Adaptive rates, loyalty redeem, then show your token at the
+                gate.
+              </p>
+            </article>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="lp-section" id="flow" style="padding-top:0">
-        <div data-reveal>
-          <div class="lp-section-label">Flow</div>
-          <h2 class="lp-title" data-split>Craft a calm parking journey</h2>
-          <p class="lp-lead">Three clear steps — map, reserve, pay — then arrive and rate your visit.</p>
-        </div>
-        <div class="lp-steps">
-          <article class="lp-step" data-reveal style="--d:40ms">
-            <div class="lp-step-no">01</div>
-            <h3>See live bays</h3>
-            <p>Color-coded availability across floors. Filter EV, accessible, and covered spots instantly.</p>
-          </article>
-          <article class="lp-step" data-reveal style="--d:100ms">
-            <div class="lp-step-no">02</div>
-            <h3>Lock &amp; book</h3>
-            <p>Temporary slot locks stop double booking while your reservation stays confirmed.</p>
-          </article>
-          <article class="lp-step" data-reveal style="--d:160ms">
-            <div class="lp-step-no">03</div>
-            <h3>Pay &amp; arrive</h3>
-            <p>Adaptive rates, loyalty redeem, then show your token at the gate.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="lp-section" id="features">
-        <div data-reveal>
-          <div class="lp-section-label">Features</div>
-          <h2 class="lp-title" data-split>Built around the driver</h2>
-        </div>
-        <div class="lp-tabs" data-reveal>
-          <button class="lp-tab active" data-tab="map" type="button">Live map</button>
-          <button class="lp-tab" data-tab="book" type="button">Reservation</button>
-          <button class="lp-tab" data-tab="pay" type="button">Payment</button>
-          <button class="lp-tab" data-tab="support" type="button">Support</button>
-        </div>
-
-        <div class="lp-feature-panel active" data-panel="map">
-          <div class="lp-feature-copy">
-            <h3>Live Slot Availability Map</h3>
-            <p>Floor layouts with near real-time status when bookings or gate events change.</p>
-            <ul class="lp-bullets">
-              <li>Open · Reserved · Occupied · Maintenance</li>
-              <li>Slot type and indicative rates</li>
-              <li>Pick a free bay in one tap</li>
-            </ul>
+        <section class="lp-section" id="features">
+          <div data-reveal>
+            <div class="lp-section-label">Features</div>
+            <h2 class="lp-title" data-split>Built around the driver</h2>
           </div>
-          <div class="lp-feature-visual">
-            <div class="lp-slot-map dark-map" style="position:relative;z-index:1">
-              <button class="lp-slot open" type="button"><span class="lp-slot-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5l2.4 2.4L16.2 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lp-slot-code">A1</span></button>
-              <button class="lp-slot reserved" type="button"><span class="lp-slot-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V8a4 4 0 018 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="lp-slot-code">A2</span></button>
-              <button class="lp-slot occupied" type="button"><span class="lp-slot-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 15.5h16l-1.2-4.2A3 3 0 0015.9 9H8.1a3 3 0 00-2.9 2.3L4 15.5z" stroke="currentColor" stroke-width="1.8"/><circle cx="7.5" cy="16.5" r="1.4" fill="currentColor"/><circle cx="16.5" cy="16.5" r="1.4" fill="currentColor"/></svg></span><span class="lp-slot-code">B1</span></button>
+          <div class="lp-tabs" data-reveal>
+            <button class="lp-tab active" data-tab="map" type="button">
+              Live map
+            </button>
+            <button class="lp-tab" data-tab="book" type="button">
+              Reservation
+            </button>
+            <button class="lp-tab" data-tab="pay" type="button">Payment</button>
+            <button class="lp-tab" data-tab="support" type="button">
+              Support
+            </button>
+          </div>
+
+          <div class="lp-feature-panel active" data-panel="map">
+            <div class="lp-feature-copy">
+              <h3>Live Slot Availability Map</h3>
+              <p>
+                Floor layouts with near real-time status when bookings or gate
+                events change.
+              </p>
+              <ul class="lp-bullets">
+                <li>Open · Reserved · Occupied · Maintenance</li>
+                <li>Slot type and indicative rates</li>
+                <li>Pick a free bay in one tap</li>
+              </ul>
             </div>
-          </div>
-        </div>
-
-        <div class="lp-feature-panel" data-panel="book">
-          <div class="lp-feature-copy">
-            <h3>Reservation &amp; Booking</h3>
-            <p>Book a window, keep a confirmation token, modify or cancel before start time.</p>
-            <ul class="lp-bullets">
-              <li>No double-booking locks</li>
-              <li>Booking history in one place</li>
-              <li>Token ready for gate check-in</li>
-            </ul>
-          </div>
-          <div class="lp-feature-visual">
-            <div style="position:relative;z-index:1">
-              <div style="font-size:0.75rem;color:#9ca3af;margin-bottom:0.5rem">BOOKING #184</div>
-              <div style="font-size:1.6rem;font-weight:600">ACTIVE</div>
-              <div style="margin-top:1rem;opacity:0.85;line-height:1.5">Slot G-A3 · 2h window<br/>Token issued · map reserved</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lp-feature-panel" data-panel="pay">
-          <div class="lp-feature-copy">
-            <h3>Adaptive rates &amp; loyalty</h3>
-            <p>Clear fee breakdown with peak / EV rules, plus points you can redeem at checkout.</p>
-            <ul class="lp-bullets">
-              <li>Transparent quote before pay</li>
-              <li>Earn points on paid visits</li>
-              <li>Digital invoice after payment</li>
-            </ul>
-          </div>
-          <div class="lp-feature-visual">
-            <div style="position:relative;z-index:1">
-              <div style="font-size:0.75rem;color:#9ca3af">INVOICE</div>
-              <div style="font-size:2rem;font-weight:600;margin:0.4rem 0">LKR 450</div>
-              <div class="lp-pay-lines">
-                <div class="lp-pay-line"><span style="width:80%"></span></div>
-                <div class="lp-pay-line"><span style="width:45%"></span></div>
+            <div class="lp-feature-visual">
+              <div
+                class="lp-slot-map dark-map"
+                style="position: relative; z-index: 1"
+              >
+                <button class="lp-slot open" type="button">
+                  <span class="lp-slot-icon"
+                    ><svg viewBox="0 0 24 24" fill="none">
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M8 12.5l2.4 2.4L16.2 9"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      /></svg></span
+                  ><span class="lp-slot-code">A1</span>
+                </button>
+                <button class="lp-slot reserved" type="button">
+                  <span class="lp-slot-icon"
+                    ><svg viewBox="0 0 24 24" fill="none">
+                      <rect
+                        x="5"
+                        y="10"
+                        width="14"
+                        height="10"
+                        rx="2"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <path
+                        d="M8 10V8a4 4 0 018 0v2"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                      /></svg></span
+                  ><span class="lp-slot-code">A2</span>
+                </button>
+                <button class="lp-slot occupied" type="button">
+                  <span class="lp-slot-icon"
+                    ><svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 15.5h16l-1.2-4.2A3 3 0 0015.9 9H8.1a3 3 0 00-2.9 2.3L4 15.5z"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      />
+                      <circle cx="7.5" cy="16.5" r="1.4" fill="currentColor" />
+                      <circle
+                        cx="16.5"
+                        cy="16.5"
+                        r="1.4"
+                        fill="currentColor"
+                      /></svg></span
+                  ><span class="lp-slot-code">B1</span>
+                </button>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="lp-feature-panel" data-panel="support">
-          <div class="lp-feature-copy">
-            <h3>Feedback &amp; inquiries</h3>
-            <p>Rate completed visits and open tickets when something goes wrong — tracked end to end.</p>
-            <ul class="lp-bullets">
-              <li>1–5 star ratings after visits</li>
-              <li>Categorized support tickets</li>
-              <li>Status updates you can follow</li>
-            </ul>
-          </div>
-          <div class="lp-feature-visual">
-            <div style="position:relative;z-index:1">
-              <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
-                <span style="background:#c8f542;color:#111;padding:0.35rem 0.7rem;border-radius:999px;font-weight:700;font-size:0.8rem">OPEN</span>
-                <span style="background:rgba(255,255,255,0.08);padding:0.35rem 0.7rem;border-radius:999px;font-size:0.8rem">IN PROGRESS</span>
-                <span style="background:rgba(255,255,255,0.08);padding:0.35rem 0.7rem;border-radius:999px;font-size:0.8rem">RESOLVED</span>
+          <div class="lp-feature-panel" data-panel="book">
+            <div class="lp-feature-copy">
+              <h3>Reservation &amp; Booking</h3>
+              <p>
+                Book a window, keep a confirmation token, modify or cancel
+                before start time.
+              </p>
+              <ul class="lp-bullets">
+                <li>No double-booking locks</li>
+                <li>Booking history in one place</li>
+                <li>Token ready for gate check-in</li>
+              </ul>
+            </div>
+            <div class="lp-feature-visual">
+              <div style="position: relative; z-index: 1">
+                <div
+                  style="
+                    font-size: 0.75rem;
+                    color: #9ca3af;
+                    margin-bottom: 0.5rem;
+                  "
+                >
+                  BOOKING #184
+                </div>
+                <div style="font-size: 1.6rem; font-weight: 600">ACTIVE</div>
+                <div style="margin-top: 1rem; opacity: 0.85; line-height: 1.5">
+                  Slot G-A3 · 2h window<br />Token issued · map reserved
+                </div>
               </div>
-              <p style="margin-top:1.2rem;line-height:1.5;opacity:0.9">INQ-A91F2 · Payment question</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section class="lp-section" id="voices">
-        <div data-reveal>
-          <div class="lp-section-label">Testimonials</div>
-          <h2 class="lp-title" data-split>What drivers say about parkED</h2>
-        </div>
-        <div class="lp-quotes">
-          <article class="lp-quote dark" data-reveal>
-            <p>“I stop circling the lot. Open the map, grab a bay, pay on the phone, and walk in with a token.”</p>
-            <footer>
-              <div class="lp-avatar">D</div>
-              <div>
-                <div class="who">Demo Customer</div>
-                <div class="role">Driver</div>
+          <div class="lp-feature-panel" data-panel="pay">
+            <div class="lp-feature-copy">
+              <h3>Adaptive rates &amp; loyalty</h3>
+              <p>
+                Clear fee breakdown with peak / EV rules, plus points you can
+                redeem at checkout.
+              </p>
+              <ul class="lp-bullets">
+                <li>Transparent quote before pay</li>
+                <li>Earn points on paid visits</li>
+                <li>Digital invoice after payment</li>
+              </ul>
+            </div>
+            <div class="lp-feature-visual">
+              <div style="position: relative; z-index: 1">
+                <div style="font-size: 0.75rem; color: #9ca3af">INVOICE</div>
+                <div
+                  style="font-size: 2rem; font-weight: 600; margin: 0.4rem 0"
+                >
+                  LKR 450
+                </div>
+                <div class="lp-pay-lines">
+                  <div class="lp-pay-line">
+                    <span style="width: 80%"></span>
+                  </div>
+                  <div class="lp-pay-line">
+                    <span style="width: 45%"></span>
+                  </div>
+                </div>
               </div>
-            </footer>
-          </article>
-          <article class="lp-quote" data-reveal style="--d:100ms">
-            <p>“Loyalty points at checkout actually show up. Booking history is clear — no more screenshot chaos.”</p>
-            <footer>
-              <div class="lp-avatar">R</div>
-              <div>
-                <div class="who">Regular user</div>
-                <div class="role">Customer</div>
+            </div>
+          </div>
+
+          <div class="lp-feature-panel" data-panel="support">
+            <div class="lp-feature-copy">
+              <h3>Feedback &amp; inquiries</h3>
+              <p>
+                Rate completed visits and open tickets when something goes wrong
+                — tracked end to end.
+              </p>
+              <ul class="lp-bullets">
+                <li>1–5 star ratings after visits</li>
+                <li>Categorized support tickets</li>
+                <li>Status updates you can follow</li>
+              </ul>
+            </div>
+            <div class="lp-feature-visual">
+              <div style="position: relative; z-index: 1">
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap">
+                  <span
+                    style="
+                      background: #c8f542;
+                      color: #111;
+                      padding: 0.35rem 0.7rem;
+                      border-radius: 999px;
+                      font-weight: 700;
+                      font-size: 0.8rem;
+                    "
+                    >OPEN</span
+                  >
+                  <span
+                    style="
+                      background: rgba(255, 255, 255, 0.08);
+                      padding: 0.35rem 0.7rem;
+                      border-radius: 999px;
+                      font-size: 0.8rem;
+                    "
+                    >IN PROGRESS</span
+                  >
+                  <span
+                    style="
+                      background: rgba(255, 255, 255, 0.08);
+                      padding: 0.35rem 0.7rem;
+                      border-radius: 999px;
+                      font-size: 0.8rem;
+                    "
+                    >RESOLVED</span
+                  >
+                </div>
+                <p style="margin-top: 1.2rem; line-height: 1.5; opacity: 0.9">
+                  INQ-A91F2 · Payment question
+                </p>
               </div>
-            </footer>
-          </article>
-        </div>
-      </section>
+            </div>
+          </div>
+        </section>
 
-      <section class="lp-section" id="for-you">
-        <div data-reveal>
-          <div class="lp-section-label">For you</div>
-          <h2 class="lp-title" data-split>Customer benefits</h2>
-          <p class="lp-lead">Everything a driver gets inside parkED — in one glance.</p>
-        </div>
-        <div class="lp-benefits-table-wrap" data-reveal>
-          <table class="lp-benefits-table">
-            <thead>
-              <tr>
-                <th>Benefit</th>
-                <th>What you get</th>
-                <th>Why it helps</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Live availability map</td>
-                <td>Green open · red reserved · orange occupied · grey maintenance</td>
-                <td>Know a free bay before you leave</td>
-              </tr>
-              <tr>
-                <td>Online reservation</td>
-                <td>Pick slot, time window, vehicle · confirmation token</td>
-                <td>No double booking, no entrance queue guesswork</td>
-              </tr>
-              <tr>
-                <td>Adaptive payment</td>
-                <td>Peak / EV / covered rates with clear breakdown (LKR)</td>
-                <td>See the price before you pay</td>
-              </tr>
-              <tr>
-                <td>Loyalty points</td>
-                <td>Earn on paid visits · redeem at checkout · tier status</td>
-                <td>Repeat parking costs less over time</td>
-              </tr>
-              <tr>
-                <td>Booking history</td>
-                <td>Active, completed, and cancelled reservations</td>
-                <td>Track visits and tokens in one place</td>
-              </tr>
-              <tr>
-                <td>Feedback &amp; ratings</td>
-                <td>1–5 stars after a completed visit</td>
-                <td>Improve the facility you use</td>
-              </tr>
-              <tr>
-                <td>Support inquiries</td>
-                <td>Open tickets for booking, payment, map, or general help</td>
-                <td>Issues stay tracked until resolved</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+        <section class="lp-section" id="voices">
+          <div data-reveal>
+            <div class="lp-section-label">Testimonials</div>
+            <h2 class="lp-title" data-split>What drivers say about parkED</h2>
+          </div>
+          <div class="lp-quotes">
+            <article class="lp-quote dark" data-reveal>
+              <p>
+                “I stop circling the lot. Open the map, grab a bay, pay on the
+                phone, and walk in with a token.”
+              </p>
+              <footer>
+                <div class="lp-avatar">D</div>
+                <div>
+                  <div class="who">Demo Customer</div>
+                  <div class="role">Driver</div>
+                </div>
+              </footer>
+            </article>
+            <article class="lp-quote" data-reveal style="--d: 100ms">
+              <p>
+                “Loyalty points at checkout actually show up. Booking history is
+                clear — no more screenshot chaos.”
+              </p>
+              <footer>
+                <div class="lp-avatar">R</div>
+                <div>
+                  <div class="who">Regular user</div>
+                  <div class="role">Customer</div>
+                </div>
+              </footer>
+            </article>
+          </div>
+        </section>
 
-      <section class="lp-final" data-reveal>
-        <h2 data-split>Ready to elevate your parking?</h2>
-        <p>Seamless reservations with a live map — built for drivers first.</p>
-        <div class="lp-final-actions">
-          <a class="lp-btn lp-btn-accent" href="register.html">Get started</a>
-          <a class="lp-btn lp-btn-ghost" href="login.html">Sign in</a>
-        </div>
-      </section>
+        <section class="lp-section" id="for-you">
+          <div data-reveal>
+            <div class="lp-section-label">For you</div>
+            <h2 class="lp-title" data-split>Customer benefits</h2>
+            <p class="lp-lead">
+              Everything a driver gets inside parkED — in one glance.
+            </p>
+          </div>
+          <div class="lp-benefits-table-wrap" data-reveal>
+            <table class="lp-benefits-table">
+              <thead>
+                <tr>
+                  <th>Benefit</th>
+                  <th>What you get</th>
+                  <th>Why it helps</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Live availability map</td>
+                  <td>
+                    Green open · red reserved · orange occupied · grey
+                    maintenance
+                  </td>
+                  <td>Know a free bay before you leave</td>
+                </tr>
+                <tr>
+                  <td>Online reservation</td>
+                  <td>Pick slot, time window, vehicle · confirmation token</td>
+                  <td>No double booking, no entrance queue guesswork</td>
+                </tr>
+                <tr>
+                  <td>Adaptive payment</td>
+                  <td>Peak / EV / covered rates with clear breakdown (LKR)</td>
+                  <td>See the price before you pay</td>
+                </tr>
+                <tr>
+                  <td>Loyalty points</td>
+                  <td>
+                    Earn on paid visits · redeem at checkout · tier status
+                  </td>
+                  <td>Repeat parking costs less over time</td>
+                </tr>
+                <tr>
+                  <td>Booking history</td>
+                  <td>Active, completed, and cancelled reservations</td>
+                  <td>Track visits and tokens in one place</td>
+                </tr>
+                <tr>
+                  <td>Feedback &amp; ratings</td>
+                  <td>1–5 stars after a completed visit</td>
+                  <td>Improve the facility you use</td>
+                </tr>
+                <tr>
+                  <td>Support inquiries</td>
+                  <td>
+                    Open tickets for booking, payment, map, or general help
+                  </td>
+                  <td>Issues stay tracked until resolved</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-      <footer class="lp-footer">
-        <div>© 2026 parkED · Y2S1-MLB-B10G1-07 · SE2030</div>
-        <nav>
-          <a href="#benefits">Benefits</a>
-          <a href="#features">Features</a>
-          <a href="#for-you">For you</a>
-          <a href="login.html">Sign in</a>
-        </nav>
-      </footer>
+        <section class="lp-final" data-reveal>
+          <h2 data-split>Ready to elevate your parking?</h2>
+          <p>
+            Seamless reservations with a live map — built for drivers first.
+          </p>
+          <div class="lp-final-actions">
+            <a class="lp-btn lp-btn-accent" href="register.html">Get started</a>
+            <a class="lp-btn lp-btn-ghost" href="login.html">Sign in</a>
+          </div>
+        </section>
+
+        <footer class="lp-footer">
+          <div>© 2026 parkED · Y2S1-MLB-B10G1-07 · SE2030</div>
+          <nav>
+            <a href="#benefits">Benefits</a>
+            <a href="#features">Features</a>
+            <a href="#for-you">For you</a>
+            <a href="login.html">Sign in</a>
+          </nav>
+        </footer>
+      </div>
     </div>
-  </div>
 
-  <div class="lp-drawer" id="lpDrawer">
-    <div class="lp-drawer-panel">
-      <a href="#benefits">Benefits</a>
-      <a href="#flow">Flow</a>
-      <a href="#features">Features</a>
-      <a href="#voices">Voices</a>
-      <a href="#for-you">For you</a>
-      <a href="login.html">Sign in</a>
-      <a href="register.html">Create account</a>
+    <div class="lp-drawer" id="lpDrawer">
+      <div class="lp-drawer-panel">
+        <a href="#benefits">Benefits</a>
+        <a href="#flow">Flow</a>
+        <a href="#features">Features</a>
+        <a href="#voices">Voices</a>
+        <a href="#for-you">For you</a>
+        <a href="login.html">Sign in</a>
+        <a href="register.html">Create account</a>
+      </div>
     </div>
-  </div>
 
-  <script src="js/api.js?v=10"></script>
-  <script src="js/live-map.js?v=4"></script>
-  <script src="js/landing.js?v=12"></script>
-</body>
+    <script src="js/api.js?v=12"></script>
+    <script src="js/live-map.js?v=6"></script>
+    <script src="js/landing.js?v=12"></script>
+  </body>
 </html>

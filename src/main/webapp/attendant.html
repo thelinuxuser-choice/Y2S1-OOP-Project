@@ -1,59 +1,119 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gate — parkED</title>
-  <link rel="stylesheet" href="css/app.css?v=10" />
-  <script src="js/loader.js?v=9"></script>
-</head>
-<body>
-  <div class="staff-shell">
-    <header class="top-simple" data-reveal>
-      <div class="brand">park<em>ED</em> <span class="text-muted text-sm" style="font-weight:600"> · Gate</span></div>
-      <div class="row">
-        <span class="text-sm text-muted" id="who"></span>
-        <button class="btn btn-outline btn-sm" type="button" onclick="logout()">Sign out</button>
-      </div>
-    </header>
-
-    <div class="staff-main gate">
-      <div class="card" data-reveal>
-        <div class="card-header">
-          <div class="badge badge-ok" style="margin-bottom:0.45rem">ATTENDANT</div>
-          <h2 class="card-title">Token check-in / out</h2>
-          <p class="text-muted text-sm">Scan or type the confirmation token from the booking.</p>
-        </div>
-        <div id="msg" hidden></div>
-        <div class="field">
-          <label for="token">Confirmation token</label>
-          <input id="token" placeholder="e.g. A1B2C3D4E5F6G7H8" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Attendant @ parkED</title>
+    <link rel="stylesheet" href="css/app.css?v=13" />
+    <script src="js/loader.js?v=9"></script>
+  </head>
+  <body>
+    <div class="staff-shell">
+      <header class="top-simple" data-reveal>
+        <div class="brand">
+          park<em>ED</em>
+          <span class="text-muted text-sm" style="font-weight: 600">
+            · Gate</span
+          >
         </div>
         <div class="row">
-          <button class="btn btn-accent" id="btnIn" type="button">Check in</button>
-          <button class="btn btn-secondary" id="btnOut" type="button">Check out</button>
+          <span class="text-sm text-muted" id="who"></span>
+          <button
+            class="btn btn-outline btn-sm"
+            type="button"
+            onclick="logout()"
+          >
+            Sign out
+          </button>
         </div>
-        <pre class="quote" id="out"></pre>
+      </header>
+
+      <div class="staff-main gate">
+        <div class="card" data-reveal>
+          <div class="card-header">
+            <div class="badge badge-ok" style="margin-bottom: 0.45rem">
+              ATTENDANT
+            </div>
+            <h2 class="card-title">Token check-in / out</h2>
+            <p class="text-muted text-sm">
+              Scan or type the confirmation token from the booking.
+            </p>
+          </div>
+          <div id="msg" hidden></div>
+          <div class="field">
+            <label for="token">Confirmation token</label>
+            <input id="token" placeholder="e.g. A1B2C3D4E5F6G7H8" />
+          </div>
+          <div class="row">
+            <button class="btn btn-accent" id="btnIn" type="button">
+              Check in
+            </button>
+            <button class="btn btn-secondary" id="btnOut" type="button">
+              Check out
+            </button>
+          </div>
+          <div class="result-panel" id="out">
+            <div class="result-empty">Check-in / check-out result appears here</div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script src="js/api.js?v=9"></script>
-  <script>
-    requireAuth(["ATTENDANT", "ADMIN"]).then((d) => {
-      if (d) qs("#who").textContent = d.user.fullName;
-    });
-    async function gate(path) {
-      try {
-        const data = await API.post("/api/gate/" + path, { token: qs("#token").value });
-        showMsg(qs("#msg"), path + " ok · reservation #" + data.reservation.reservationId, true);
-        qs("#out").textContent = JSON.stringify(data, null, 2);
-      } catch (e) {
-        showMsg(qs("#msg"), e.message, false);
+    <script src="js/api.js?v=12"></script>
+    <script>
+      requireAuth(["ATTENDANT", "ADMIN"]).then((d) => {
+        if (d) qs("#who").textContent = d.user.fullName;
+      });
+      function renderGate(data) {
+        const r = data.reservation || {};
+        const action = data.action || "—";
+        const over = data.overstay;
+        let extra = "";
+        if (over && over.overstay) {
+          const amt = over.payment && over.payment.finalAmount != null
+            ? over.payment.finalAmount
+            : "—";
+          extra =
+            `<div class="result-kv" style="margin-top:0.85rem">` +
+            `<div class="kv-row"><span>Overstay</span><strong>${over.minutes || "—"} min</strong></div>` +
+            `<div class="kv-row"><span>Extra fee</span><strong>LKR ${amt}</strong></div>` +
+            `</div>`;
+        } else if (action === "CHECKOUT") {
+          extra = `<p class="text-muted text-sm" style="margin-top:0.75rem">No overstay charge.</p>`;
+        }
+        return (
+          `<div class="result-panel-title">${action === "CHECKIN" ? "Checked in" : action === "CHECKOUT" ? "Checked out" : "Gate result"}</div>` +
+          `<div class="result-stats">` +
+          `<div class="result-stat accent"><span>Action</span><strong>${action}</strong></div>` +
+          `<div class="result-stat"><span>Reservation</span><strong>#${r.reservationId || "—"}</strong></div>` +
+          `<div class="result-stat"><span>Slot</span><strong>#${r.slotId || "—"}</strong></div>` +
+          `</div>` +
+          `<div class="result-kv">` +
+          `<div class="kv-row"><span>Token</span><strong>${r.confirmationToken || "—"}</strong></div>` +
+          `<div class="kv-row"><span>Status</span><strong>${r.status || "—"}</strong></div>` +
+          `<div class="kv-row"><span>Start</span><strong>${r.startTime || "—"}</strong></div>` +
+          `<div class="kv-row"><span>End</span><strong>${r.endTime || "—"}</strong></div>` +
+          `</div>` +
+          extra
+        );
       }
-    }
-    qs("#btnIn").onclick = () => gate("checkin");
-    qs("#btnOut").onclick = () => gate("checkout");
-  </script>
-</body>
+      async function gate(path) {
+        try {
+          const data = await API.post("/api/gate/" + path, {
+            token: qs("#token").value,
+          });
+          showMsg(
+            qs("#msg"),
+            path + " ok · reservation #" + data.reservation.reservationId,
+            true,
+          );
+          qs("#out").innerHTML = renderGate(data);
+        } catch (e) {
+          showMsg(qs("#msg"), e.message, false);
+        }
+      }
+      qs("#btnIn").onclick = () => gate("checkin");
+      qs("#btnOut").onclick = () => gate("checkout");
+    </script>
+  </body>
 </html>

@@ -11,11 +11,13 @@ requireAuth(["CUSTOMER"]).then((data) => {
     (v) => `<option value="${v.vehicleId}">${v.plateNumber} (${v.vehicleType})</option>`
   ).join("") || `<option value="">No vehicle – add via API later</option>`;
 
-  const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  qs("#startTime").value = now.toISOString().slice(0, 16);
-  const end = new Date(now.getTime() + 2 * 3600 * 1000);
-  qs("#endTime").value = end.toISOString().slice(0, 16);
+  syncBookingLimits(true);
+  ["start", "end"].forEach((prefix) => {
+    ["Date", "Hour", "Min", "Ampm"].forEach((part) => {
+      qs("#" + prefix + part).addEventListener("change", () => syncBookingLimits(false));
+    });
+  });
+  setInterval(() => syncBookingLimits(false), 30000);
 
   const mapRoot = qs("#sec-map");
   liveMap = new LiveMapUI(mapRoot, {
@@ -38,6 +40,120 @@ requireAuth(["CUSTOMER"]).then((data) => {
   loadRateInfo();
   wireTabs();
 });
+
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+function dateOnly(d) {
+  return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+}
+
+function to24(hour12, ampm) {
+  let h = Number(hour12);
+  if (ampm === "AM") return h === 12 ? 0 : h;
+  return h === 12 ? 12 : h + 12;
+}
+
+function partsFromDate(d) {
+  const h24 = d.getHours();
+  const ampm = h24 >= 12 ? "PM" : "AM";
+  let h12 = h24 % 12;
+  if (h12 === 0) h12 = 12;
+  const min = Math.floor(d.getMinutes() / 5) * 5;
+  return { date: dateOnly(d), hour: String(h12), min: pad2(min), ampm };
+}
+
+function stampFromParts(date, hour, min, ampm) {
+  return date + "T" + pad2(to24(hour, ampm)) + ":" + min;
+}
+
+function roundUp5(d) {
+  const x = new Date(d.getTime());
+  x.setSeconds(0, 0);
+  const rem = x.getMinutes() % 5;
+  if (rem !== 0) x.setMinutes(x.getMinutes() + (5 - rem));
+  return x;
+}
+
+const CLOCK_MINUTES = ["00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55"];
+
+function slotOk(date, hour12, min, ampm, earliest) {
+  return new Date(stampFromParts(date, hour12, min, ampm)).getTime() >= earliest.getTime();
+}
+
+function readPrefer(prefix, fallback) {
+  const dateEl = qs("#" + prefix + "Date");
+  const hourEl = qs("#" + prefix + "Hour");
+  if (!dateEl || !hourEl || !hourEl.options.length || !dateEl.value) return partsFromDate(fallback);
+  return {
+    date: dateEl.value,
+    hour: hourEl.value,
+    min: qs("#" + prefix + "Min").value,
+    ampm: qs("#" + prefix + "Ampm").value
+  };
+}
+
+/** Grey out past dates in the calendar and past hours/minutes/AM-PM in the time lists. */
+function paintClock(prefix, earliest, prefer) {
+  const dateEl = qs("#" + prefix + "Date");
+  const hourEl = qs("#" + prefix + "Hour");
+  const minEl = qs("#" + prefix + "Min");
+  const apEl = qs("#" + prefix + "Ampm");
+  const today = new Date();
+  const far = new Date(today.getTime());
+  far.setDate(far.getDate() + 60);
+  dateEl.min = dateOnly(today);
+  dateEl.max = dateOnly(far);
+
+  let date = prefer.date;
+  if (!date || date < dateEl.min) date = dateEl.min;
+  if (date > dateEl.max) date = dateEl.max;
+  dateEl.value = date;
+
+  const periodOk = (ampm) => CLOCK_MINUTES.some((m) =>
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].some((h) => slotOk(date, h, m, ampm, earliest))
+  );
+  const ampm = periodOk(prefer.ampm) ? prefer.ampm : (periodOk("AM") ? "AM" : "PM");
+  apEl.innerHTML =
+    `<option value="AM"${periodOk("AM") ? "" : " disabled"}>AM</option>` +
+    `<option value="PM"${periodOk("PM") ? "" : " disabled"}>PM</option>`;
+  apEl.value = ampm;
+
+  const hourOk = (h) => CLOCK_MINUTES.some((m) => slotOk(date, h, m, ampm, earliest));
+  let hour = Number(prefer.hour);
+  if (!hourOk(hour)) {
+    hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].find((h) => hourOk(h)) || 12;
+  }
+  hourEl.innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((h) =>
+    `<option value="${h}"${hourOk(h) ? "" : " disabled"}>${pad2(h)}</option>`
+  ).join("");
+  hourEl.value = String(hour);
+
+  const minOk = (m) => slotOk(date, Number(hourEl.value), m, ampm, earliest);
+  let min = prefer.min;
+  if (!minOk(min)) min = CLOCK_MINUTES.find((m) => minOk(m)) || "00";
+  minEl.innerHTML = CLOCK_MINUTES.map((m) =>
+    `<option value="${m}"${minOk(m) ? "" : " disabled"}>${m}</option>`
+  ).join("");
+  minEl.value = min;
+
+  qs("#" + prefix + "Time").value = stampFromParts(dateEl.value, hourEl.value, minEl.value, apEl.value);
+}
+
+function syncBookingLimits(resetValues) {
+  const startEarliest = roundUp5(new Date());
+  const startPrefer = resetValues ? partsFromDate(startEarliest) : readPrefer("start", startEarliest);
+  paintClock("start", startEarliest, startPrefer);
+
+  const startAt = new Date(qs("#startTime").value);
+  const endEarliest = new Date(startAt.getTime() + 5 * 60 * 1000);
+  const endDefault = new Date(startAt.getTime() + 2 * 60 * 60 * 1000);
+  let endPrefer = resetValues ? partsFromDate(endDefault) : readPrefer("end", endDefault);
+  const chosenEnd = new Date(stampFromParts(endPrefer.date, endPrefer.hour, endPrefer.min, endPrefer.ampm));
+  if (chosenEnd.getTime() < endEarliest.getTime()) endPrefer = partsFromDate(endDefault);
+  paintClock("end", endEarliest, endPrefer);
+}
 
 function wireTabs() {
   document.querySelectorAll("[data-tab]").forEach((a) => {
@@ -66,26 +182,62 @@ function loadMap() {
 async function loadRateInfo() {
   try {
     const r = await API.get("/api/payments/rates");
-    const rules = (r.rules || []).filter((x) => x.active).map(
-      (x) => `${x.ruleName}: ×${x.multiplier} (${x.strategyKey})`
-    ).join(" · ");
+    const rules = (r.rules || []).filter((x) => x.active);
+    const ruleHtml = rules.length
+      ? `<ul class="result-lines">${rules.map((x) =>
+          `<li><span>${x.ruleName} <span class="muted">(${x.strategyKey})</span></span><strong>×${x.multiplier}</strong></li>`
+        ).join("")}</ul>`
+      : `<div class="result-empty">Using default rate rules</div>`;
     qs("#rateInfoBox").innerHTML =
-      `<strong>Peak windows:</strong> ${(r.peakWindows || []).join(", ")}<br/>` +
-      `<strong>Active rules:</strong> ${rules || "defaults"}<br/>` +
-      `<strong>Loyalty:</strong> ${r.loyaltyRedeem || ""}`;
+      `<div class="result-panel-title" style="margin-bottom:0.55rem">Current rates</div>` +
+      `<div class="result-kv" style="margin-bottom:0.75rem">` +
+      `<div class="kv-row"><span>Peak windows</span><strong>${(r.peakWindows || []).join(" · ") || "—"}</strong></div>` +
+      `<div class="kv-row"><span>Loyalty</span><strong>${r.loyaltyRedeem || "—"}</strong></div>` +
+      `</div>` +
+      ruleHtml;
   } catch (e) {
-    qs("#rateInfoBox").textContent = "Could not load rate info.";
+    qs("#rateInfoBox").innerHTML = `<div class="result-empty">Could not load rate info.</div>`;
   }
 }
 
 function formatQuote(q) {
-  if (!q) return "";
-  const lines = (q.breakdown || []).join("\n");
+  if (!q) return `<div class="result-empty">No quote</div>`;
+  const lines = (q.breakdown || [])
+    .map((line) => `<li><span>${escHtml(line)}</span></li>`)
+    .join("");
   return (
-    `Base LKR ${q.baseAmount}\n` +
-    `Discount LKR ${q.discountAmount}\n` +
-    `Pay LKR ${q.finalAmount}\n\n` +
-    lines
+    `<div class="result-panel-title">Quote breakdown</div>` +
+    `<div class="result-stats">` +
+    `<div class="result-stat"><span>Base</span><strong>LKR ${q.baseAmount}</strong></div>` +
+    `<div class="result-stat"><span>Discount</span><strong>LKR ${q.discountAmount}</strong></div>` +
+    `<div class="result-stat accent"><span>Pay now</span><strong>LKR ${q.finalAmount}</strong></div>` +
+    `</div>` +
+    (lines
+      ? `<ul class="result-lines">${lines}</ul>`
+      : `<div class="result-empty">No strategy lines</div>`)
+  );
+}
+
+function formatPaymentReceipt(p) {
+  if (!p) return `<div class="result-empty">No payment</div>`;
+  const strat = (p.rateStrategy || "")
+    .split(" | ")
+    .filter(Boolean)
+    .map((line) => `<li><span>${escHtml(line)}</span></li>`)
+    .join("");
+  return (
+    `<div class="result-panel-title">Payment confirmed</div>` +
+    `<div class="result-stats">` +
+    `<div class="result-stat"><span>Invoice</span><strong>${escHtml(p.invoiceNo || "—")}</strong></div>` +
+    `<div class="result-stat"><span>Status</span><strong>${escHtml(p.status || "PAID")}</strong></div>` +
+    `<div class="result-stat accent"><span>Paid</span><strong>LKR ${p.finalAmount}</strong></div>` +
+    `</div>` +
+    `<div class="result-kv" style="margin-bottom:0.85rem">` +
+    `<div class="kv-row"><span>Reservation</span><strong>#${p.reservationId}</strong></div>` +
+    `<div class="kv-row"><span>Base</span><strong>LKR ${p.baseAmount}</strong></div>` +
+    `<div class="kv-row"><span>Discount</span><strong>LKR ${p.discountAmount}</strong></div>` +
+    `</div>` +
+    (strat ? `<ul class="result-lines">${strat}</ul>` : "")
   );
 }
 
@@ -140,9 +292,18 @@ async function cancelRes(id) {
 }
 
 async function rescheduleRes(id) {
-  const start = prompt("New start (YYYY-MM-DDTHH:mm)", qs("#startTime").value);
-  const end = prompt("New end (YYYY-MM-DDTHH:mm)", qs("#endTime").value);
-  if (!start || !end) return;
+  const vals = await uiDialog({
+    title: "Reschedule booking",
+    message: "Booking #" + id,
+    confirmLabel: "Save",
+    fields: [
+      { name: "start", label: "New start", type: "datetime-local", value: qs("#startTime").value, required: true },
+      { name: "end", label: "New end", type: "datetime-local", value: qs("#endTime").value, required: true }
+    ]
+  });
+  if (!vals) return;
+  const start = vals.start;
+  const end = vals.end;
   try {
     await API.post("/api/reservations/reschedule/" + id, {
       startTime: start.length === 16 ? start + ":00" : start,
@@ -177,7 +338,7 @@ qs("#btnQuote").onclick = async () => {
     const id = qs("#payResId").value;
     const pts = qs("#payPts").value || 0;
     const q = await API.get("/api/payments/quote/" + id + "?points=" + pts);
-    qs("#quoteBox").textContent = formatQuote(q);
+    qs("#quoteBox").innerHTML = formatQuote(q);
   } catch (e) {
     showMsg(qs("#msg"), e.message, false);
   }
@@ -190,7 +351,7 @@ qs("#btnPay").onclick = async () => {
       pointsToRedeem: Number(qs("#payPts").value || 0)
     });
     showMsg(qs("#msg"), "Paid " + p.invoiceNo + " LKR " + p.finalAmount, true);
-    qs("#quoteBox").textContent = JSON.stringify(p, null, 2);
+    qs("#quoteBox").innerHTML = formatPaymentReceipt(p);
     loadPayments();
     loadLoyalty();
   } catch (e) {
@@ -237,7 +398,13 @@ qs("#btnEnroll").onclick = async () => {
 };
 
 qs("#btnUnenroll").onclick = async () => {
-  if (!confirm("Leave loyalty program?")) return;
+  const ok = await uiDialog({
+    title: "Leave loyalty",
+    message: "You will leave the loyalty program. Points on this account will no longer be available.",
+    confirmLabel: "Leave",
+    danger: true
+  });
+  if (!ok) return;
   try {
     await API.post("/api/loyalty/unenroll", {});
     loadLoyalty();
@@ -298,9 +465,17 @@ async function loadFbMine() {
 }
 
 async function editFb(id, oldRating) {
-  const rating = prompt("Rating 1–5", oldRating);
-  if (!rating) return;
-  const comment = prompt("Comment (optional)", window.__fbComments[id] || "");
+  const vals = await uiDialog({
+    title: "Edit review",
+    confirmLabel: "Save",
+    fields: [
+      { name: "rating", label: "Rating (1–5)", type: "number", value: oldRating, min: 1, max: 5, step: "1", required: true },
+      { name: "comment", label: "Comment (optional)", type: "textarea", value: window.__fbComments[id] || "", required: false }
+    ]
+  });
+  if (!vals) return;
+  const rating = vals.rating;
+  const comment = vals.comment;
   try {
     await API.post("/api/feedback/update/" + id, { rating: Number(rating), comment });
     showMsg(qs("#msg"), "Review updated (original kept on file)", true);
@@ -311,7 +486,13 @@ async function editFb(id, oldRating) {
 }
 
 async function delFb(id) {
-  if (!confirm("Delete this feedback?")) return;
+  const ok = await uiDialog({
+    title: "Delete review",
+    message: "This feedback will be removed.",
+    confirmLabel: "Delete",
+    danger: true
+  });
+  if (!ok) return;
   try {
     await API.del("/api/feedback/" + id);
     loadFbMine();

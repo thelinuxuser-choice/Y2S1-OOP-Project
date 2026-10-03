@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,15 +191,20 @@ public class FacilityAdminService {
         }
     }
 
-    public boolean deactivateSlot(int slotId) {
-        // soft-delete = MAINTENANCE so bay stays off the bookable pool
-        String sql = "UPDATE slots SET status = 'MAINTENANCE' WHERE slot_id = ?";
+    public boolean deleteSlot(int slotId) {
+        String sql = "DELETE FROM slots WHERE slot_id = ?";
         try (Connection c = DBConnection.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, slotId);
             return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1451) {
+                throw new IllegalArgumentException(
+                        "Cannot delete slot #" + slotId + " — it still has reservations. Cancel those bookings first.");
+            }
+            throw new RuntimeException("delete slot failed", e);
         } catch (Exception e) {
-            throw new RuntimeException("deactivate slot failed", e);
+            throw new RuntimeException("delete slot failed", e);
         }
     }
 

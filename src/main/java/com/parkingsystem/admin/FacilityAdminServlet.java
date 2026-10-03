@@ -101,9 +101,15 @@ public class FacilityAdminServlet extends HttpServlet {
                 JsonUtil.ok(resp, MapOf("updated", true, "slotId", id));
                 return;
             }
-            if (path.startsWith("/slots/") && path.endsWith("/deactivate")) {
-                int id = Integer.parseInt(path.substring("/slots/".length(), path.length() - "/deactivate".length()));
-                JsonUtil.ok(resp, MapOf("deactivated", service.deactivateSlot(id), "slotId", id));
+            if (path.startsWith("/slots/") && path.endsWith("/delete")) {
+                int id = Integer.parseInt(path.substring("/slots/".length(), path.length() - "/delete".length()));
+                boolean ok = service.deleteSlot(id);
+                if (!ok) {
+                    JsonUtil.fail(resp, 404, "Slot not found");
+                    return;
+                }
+                AuditLogger.log(u.getUserId(), "ADMIN_SLOT_DELETE", "slotId=" + id);
+                JsonUtil.ok(resp, MapOf("deleted", true, "slotId", id));
                 return;
             }
             if (path.startsWith("/facilities/") && path.endsWith("/active")) {

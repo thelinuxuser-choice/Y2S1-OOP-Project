@@ -202,7 +202,9 @@
               "</span>" +
               "<strong>" +
               s.slotCode +
-              "</strong>" +
+              " <span class=\"text-muted\" style=\"font-weight:600\">#" +
+              s.slotId +
+              "</span></strong>" +
               "<em>" +
               ui.label +
               "</em>" +

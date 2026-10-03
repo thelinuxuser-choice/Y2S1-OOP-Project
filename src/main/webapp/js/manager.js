@@ -1,5 +1,40 @@
 let lastReport = null;
 
+function lockMin(id, min, allowEmpty) {
+  const el = typeof id === "string" ? qs("#" + id) : id;
+  if (!el || el.dataset.minLocked === "1") return;
+  el.dataset.minLocked = "1";
+  el.min = String(min);
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "-" || e.key === "Subtract") e.preventDefault();
+  });
+  const guard = () => {
+    if (el.value === "") {
+      el.classList.toggle("num-blocked", !allowEmpty);
+      return;
+    }
+    const n = Number(el.value);
+    if (el.value === "-" || Number.isNaN(n) || n < min) {
+      el.classList.add("num-blocked");
+      el.value = String(min);
+      return;
+    }
+    el.classList.remove("num-blocked");
+  };
+  el.addEventListener("input", guard);
+  el.addEventListener("change", guard);
+}
+
+function lockManagerNumbers() {
+  lockMin("newRuleMult", 0, false);
+  lockMin("newSlotRate", 0, false);
+  lockMin("updSlotId", 1, true);
+  lockMin("updSlotRate", 0, true);
+  document.querySelectorAll("#loyRules input[type='number']").forEach((el) => lockMin(el, 0, false));
+}
+
+lockManagerNumbers();
+
 requireAuth(["MANAGER", "ADMIN"]).then((d) => {
   if (!d) return;
   qs("#who").textContent = d.user.fullName;
@@ -136,10 +171,19 @@ async function loadRateRules() {
 }
 
 async function updRule(id, old) {
-  const mult = prompt("New multiplier", old);
-  if (!mult) return;
-  await API.post("/api/payments/rules/update/" + id, { multiplier: Number(mult) });
-  refreshAll();
+  const vals = await uiDialog({
+    title: "Edit multiplier",
+    message: "Rule #" + id,
+    confirmLabel: "Save",
+    fields: [{ name: "mult", label: "New multiplier", type: "number", value: old, min: 0, step: "0.01", required: true }]
+  });
+  if (!vals) return;
+  try {
+    await API.post("/api/payments/rules/update/" + id, { multiplier: Number(vals.mult) });
+    refreshAll();
+  } catch (e) {
+    showMsg(qs("#msg"), e.message, false);
+  }
 }
 
 async function toggleRule(id, active) {
@@ -148,9 +192,19 @@ async function toggleRule(id, active) {
 }
 
 async function delRule(id) {
-  if (!confirm("Delete rule #" + id + "?")) return;
-  await API.del("/api/payments/rules/" + id);
-  refreshAll();
+  const ok = await uiDialog({
+    title: "Delete rule",
+    message: "Rule #" + id + " will be removed.",
+    confirmLabel: "Delete",
+    danger: true
+  });
+  if (!ok) return;
+  try {
+    await API.del("/api/payments/rules/" + id);
+    refreshAll();
+  } catch (e) {
+    showMsg(qs("#msg"), e.message, false);
+  }
 }
 
 const LOY_KEYS = [
@@ -167,15 +221,18 @@ async function loadLoyaltyRules() {
   qs("#loyRules").innerHTML = LOY_KEYS.map(([k, label]) => `
     <div class="field">
       <label for="loy_${k}">${label}</label>
-      <input id="loy_${k}" data-key="${k}" value="${rules[k] || ""}" />
+      <input id="loy_${k}" data-key="${k}" type="number" min="0" step="1" value="${rules[k] || ""}" />
     </div>`).join("");
+  lockManagerNumbers();
 }
 
 qs("#btnSaveLoyRules").onclick = async () => {
   try {
     const body = {};
     LOY_KEYS.forEach(([k]) => {
-      body[k] = qs("#loy_" + k).value;
+      const n = Number(qs("#loy_" + k).value);
+      if (Number.isNaN(n) || n < 0) throw new Error("Loyalty values cannot be negative");
+      body[k] = String(n);
     });
     await API.post("/api/loyalty/rules", body);
     showMsg(qs("#msg"), "Loyalty rules saved", true);
@@ -189,10 +246,12 @@ qs("#btnAddRule").onclick = async () => {
   try {
     const key = qs("#newRuleKey").value;
     if (!key) throw new Error("Pick or create a strategy key first");
+    const mult = Number(qs("#newRuleMult").value);
+    if (Number.isNaN(mult) || mult < 0) throw new Error("Multiplier cannot be negative");
     await API.post("/api/payments/rules", {
       ruleName: qs("#newRuleName").value,
       strategyKey: key,
-      multiplier: Number(qs("#newRuleMult").value)
+      multiplier: mult
     });
     showMsg(qs("#msg"), "Rule created", true);
     refreshAll();
@@ -215,17 +274,38 @@ async function loadFbAll() {
 }
 
 async function mgrEditFb(id, old) {
-  const rating = prompt("Rating 1–5", old);
-  const comment = prompt("Comment", "");
-  if (!rating) return;
-  await API.post("/api/feedback/manager/update/" + id, { rating: Number(rating), comment });
-  refreshAll();
+  const vals = await uiDialog({
+    title: "Edit feedback",
+    message: "Feedback #" + id,
+    confirmLabel: "Save",
+    fields: [
+      { name: "rating", label: "Rating (1–5)", type: "number", value: old, min: 1, max: 5, step: "1", required: true },
+      { name: "comment", label: "Comment", type: "textarea", value: "", required: false }
+    ]
+  });
+  if (!vals) return;
+  try {
+    await API.post("/api/feedback/manager/update/" + id, { rating: Number(vals.rating), comment: vals.comment });
+    refreshAll();
+  } catch (e) {
+    showMsg(qs("#msg"), e.message, false);
+  }
 }
 
 async function mgrDelFb(id) {
-  if (!confirm("Delete feedback #" + id + "?")) return;
-  await API.del("/api/feedback/" + id);
-  refreshAll();
+  const ok = await uiDialog({
+    title: "Delete feedback",
+    message: "Feedback #" + id + " will be removed.",
+    confirmLabel: "Delete",
+    danger: true
+  });
+  if (!ok) return;
+  try {
+    await API.del("/api/feedback/" + id);
+    refreshAll();
+  } catch (e) {
+    showMsg(qs("#msg"), e.message, false);
+  }
 }
 
 qs("#btnGenReport").onclick = async () => {
@@ -233,9 +313,31 @@ qs("#btnGenReport").onclick = async () => {
     lastReport = await API.get("/api/payments/revenue/report");
     const r = lastReport;
     qs("#revSummary").textContent =
-      `Net LKR ${r.netRevenueLkr} · Paid ${r.countPaid} · Refunded ${r.countRefunded} · Generated ${r.generatedAt}`;
-    qs("#revReport").style.display = "block";
-    qs("#revReport").textContent = JSON.stringify(r, null, 2);
+      "Report generated " + (r.generatedAt || "").replace("T", " ").substring(0, 19);
+    const panel = qs("#revMetrics");
+    panel.style.display = "block";
+    panel.innerHTML =
+      `<div class="result-panel-title">Revenue summary</div>` +
+      `<div class="result-stats">` +
+      `<div class="result-stat accent"><span>Net revenue</span><strong>LKR ${r.netRevenueLkr}</strong></div>` +
+      `<div class="result-stat"><span>Paid invoices</span><strong>${r.countPaid}</strong></div>` +
+      `<div class="result-stat"><span>Refunded</span><strong>${r.countRefunded}</strong></div>` +
+      `</div>` +
+      `<div class="result-kv">` +
+      `<div class="kv-row"><span>Gross paid</span><strong>LKR ${r.totalPaidLkr != null ? r.totalPaidLkr : "—"}</strong></div>` +
+      `<div class="kv-row"><span>Total refunded</span><strong>LKR ${r.totalRefundedLkr != null ? r.totalRefundedLkr : "—"}</strong></div>` +
+      `<div class="kv-row"><span>Line items</span><strong>${(r.rows || []).length}</strong></div>` +
+      `</div>`;
+    if (r.rows && r.rows.length) {
+      qs("#rev").innerHTML = r.rows.map((p) => `
+        <tr>
+          <td>${p.invoiceNo || "—"}</td>
+          <td>${p.reservationId}</td>
+          <td>LKR ${p.finalAmount}</td>
+          <td>${p.status}</td>
+          <td></td>
+        </tr>`).join("");
+    }
     qs("#btnDownloadCsv").style.display = "inline-flex";
   } catch (e) {
     showMsg(qs("#msg"), e.message, false);
@@ -304,11 +406,13 @@ qs("#btnReply").onclick = async () => {
 
 qs("#btnAddSlot").onclick = async () => {
   try {
+    const baseRate = Number(qs("#newSlotRate").value);
+    if (Number.isNaN(baseRate) || baseRate < 0) throw new Error("Base rate cannot be negative");
     const payload = {
       floorId: Number(qs("#newFloorId").value),
       slotCode: qs("#newSlotCode").value,
       slotType: qs("#newSlotType").value,
-      baseRate: Number(qs("#newSlotRate").value)
+      baseRate
     };
     const sk = qs("#newSlotStrategyKey").value;
     if (sk) payload.rateStrategyKey = sk;
@@ -323,8 +427,13 @@ qs("#btnAddSlot").onclick = async () => {
 qs("#btnUpdSlot").onclick = async () => {
   try {
     const id = qs("#updSlotId").value;
+    if (id !== "" && Number(id) < 1) throw new Error("Slot ID must be 1 or higher");
     const body = { status: qs("#updSlotStatus").value };
-    if (qs("#updSlotRate").value) body.baseRate = Number(qs("#updSlotRate").value);
+    if (qs("#updSlotRate").value) {
+      const rate = Number(qs("#updSlotRate").value);
+      if (Number.isNaN(rate) || rate < 0) throw new Error("Rate cannot be negative");
+      body.baseRate = rate;
+    }
     const sk = qs("#updSlotStrategyKey").value;
     if (sk) body.rateStrategyKey = sk;
     const fl = qs("#updSlotFloor").value;
@@ -337,11 +446,20 @@ qs("#btnUpdSlot").onclick = async () => {
   }
 };
 
-qs("#btnDeactSlot").onclick = async () => {
+qs("#btnDeleteSlot").onclick = async () => {
   try {
     const id = qs("#updSlotId").value;
-    await API.post("/api/admin/slots/" + id + "/deactivate", {});
-    showMsg(qs("#msg"), "Slot #" + id + " set to maintenance", true);
+    if (!id || Number(id) < 1) throw new Error("Enter a slot ID of 1 or higher");
+    const ok = await uiDialog({
+      title: "Delete slot",
+      message: "Slot #" + id + " will be removed from the map.",
+      confirmLabel: "Delete",
+      danger: true
+    });
+    if (!ok) return;
+    await API.post("/api/admin/slots/" + id + "/delete", {});
+    showMsg(qs("#msg"), "Slot #" + id + " deleted", true);
+    qs("#updSlotId").value = "";
     refreshAll();
   } catch (e) {
     showMsg(qs("#msg"), e.message, false);

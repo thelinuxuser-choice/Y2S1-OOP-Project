@@ -1,76 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Register — parkED</title>
-  <link rel="stylesheet" href="css/app.css?v=9" />
-  <script src="js/loader.js?v=9"></script>
-</head>
-<body>
-  <div class="auth-page">
-    <aside class="auth-aside" data-reveal>
-      <div class="brand" style="color:#fff">park<em style="color:#d4ff00">ED</em></div>
-      <div>
-        <h1>Join as a driver.</h1>
-        <p>Book slots, pay online, earn loyalty, and rate your visits.</p>
-      </div>
-      <p class="text-sm" style="color:#71717a">Customer accounts only</p>
-    </aside>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register @ parkED</title>
+    <link rel="stylesheet" href="css/app.css?v=9" />
+    <script src="js/loader.js?v=9"></script>
+  </head>
+  <body>
+    <div class="auth-page">
+      <aside class="auth-aside" data-reveal>
+        <div class="brand" style="color: #fff">
+          park<em style="color: #d4ff00">ED</em>
+        </div>
+        <div>
+          <h1>Join as a driver.</h1>
+          <p>Book slots, pay online, earn loyalty, and rate your visits.</p>
+        </div>
+        <p class="text-sm" style="color: #71717a">Customer accounts only</p>
+      </aside>
 
-    <main class="auth-main">
-      <div class="auth-box" data-reveal>
-        <div class="badge badge-ok" style="margin-bottom:0.85rem">New account</div>
-        <h2>Create account</h2>
-        <p class="sub text-muted text-sm">Takes under a minute.</p>
-        <div id="msg" hidden></div>
+      <main class="auth-main">
+        <div class="auth-box" data-reveal>
+          <div class="badge badge-ok" style="margin-bottom: 0.85rem">
+            New account
+          </div>
+          <h2>Create account</h2>
+          <p class="sub text-muted text-sm">Takes under a minute.</p>
+          <div id="msg" hidden></div>
 
-        <div class="field">
-          <label for="fullName">Full name</label>
-          <input id="fullName" />
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input id="email" type="email" />
-        </div>
-        <div class="field">
-          <label for="phone">Phone</label>
-          <input id="phone" />
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <input id="password" type="password" />
-        </div>
-        <div class="field">
-          <label for="confirm">Confirm password</label>
-          <input id="confirm" type="password" />
-        </div>
+          <div class="field">
+            <label for="fullName">Full name</label>
+            <input id="fullName" />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" />
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" type="password" />
+          </div>
+          <div class="field">
+            <label for="confirm">Confirm password</label>
+            <input id="confirm" type="password" />
+          </div>
 
-        <button class="btn btn-accent btn-block" id="btnReg">Create account</button>
-        <p class="text-sm" style="margin-top:1rem">
-          Already registered? <a class="link" href="login.html">Sign in</a>
-        </p>
-      </div>
-    </main>
-  </div>
+          <button class="btn btn-accent btn-block" id="btnReg">
+            Create account
+          </button>
+          <p class="text-sm" style="margin-top: 1rem">
+            Already registered? <a class="link" href="login.html">Sign in</a>
+          </p>
+        </div>
+      </main>
+    </div>
 
-  <script src="js/api.js?v=9"></script>
-  <script>
-    qs("#btnReg").onclick = async () => {
-      try {
-        await API.post("/api/auth/register", {
-          fullName: qs("#fullName").value,
-          email: qs("#email").value,
-          phone: qs("#phone").value,
-          password: qs("#password").value,
-          confirmPassword: qs("#confirm").value
-        });
-        showMsg(qs("#msg"), "Account created — you can sign in now.", true);
-        setTimeout(() => (window.location.href = "login.html"), 900);
-      } catch (e) {
-        showMsg(qs("#msg"), e.message, false);
-      }
-    };
-  </script>
-</body>
+    <script src="js/api.js?v=11"></script>
+    <script>
+      qs("#btnReg").onclick = async () => {
+        try {
+          await API.post("/api/auth/register", {
+            fullName: qs("#fullName").value,
+            email: qs("#email").value,
+            phone: qs("#phone").value,
+            password: qs("#password").value,
+            confirmPassword: qs("#confirm").value,
+          });
+          showMsg(qs("#msg"), "Account created — you can sign in now.", true);
+          setTimeout(() => (window.location.href = "login.html"), 900);
+        } catch (e) {
+          showMsg(qs("#msg"), e.message, false);
+        }
+      };
+    </script>
+  </body>
 </html>
