@@ -281,7 +281,7 @@ async function loadBookings() {
 async function cancelRes(id) {
   try {
     await API.post("/api/reservations/cancel/" + id, {});
-    showMsg(qs("#msg"), "Cancelled #" + id + " (refund if paid)", true);
+    showMsg(qs("#msg"), "Removed booking #" + id, true);
     loadBookings();
     loadMap();
     loadPayments();

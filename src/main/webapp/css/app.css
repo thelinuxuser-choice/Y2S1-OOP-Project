@@ -1,20 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800&display=swap");
 
-/* parkED app shell — same language as Slot Availability Map */
 :root {
-  --bg: #050505;
-  --shell: #eceae4;
-  --shell-2: #f6f4ee;
-  --card: #ffffff;
-  --card-dark: #171717;
-  --ink: #111111;
-  --muted: #6b6b6b;
-  --border: rgba(17, 17, 17, 0.1);
-  --lime: #d4ff00;
-  --green: #22c55e;
-  --red: #ef4444;
-  --orange: #f97316;
-  --slate: #94a3b8;
+  /* Change a colour here and every button that uses it updates. */
+  --bg: #050505;          /* black edge around every portal page */
+  --shell: #eceae4;       /* cream background of customer, manager, attendant */
+  --shell-2: #f6f4ee;     /* lighter cream behind login and register cards */
+  --card: #ffffff;        /* white cards inside a portal */
+  --card-dark: #171717;   /* dark cards (ratings, revenue highlight) */
+  --ink: #111111;         /* main text and black buttons (Sign out) */
+  --muted: #6b6b6b;       /* grey helper text */
+  --border: rgba(17, 17, 17, 0.1); /* card and input borders */
+  --lime: #d4ff00;        /* lime buttons: Continue, Create, Book, Save, Pay */
+  --green: #22c55e;       /* success green, available legend dot */
+  --red: #ef4444;         /* Delete confirm and reserved legend dot */
+  --orange: #f97316;      /* warning buttons and occupied legend dot */
+  --slate: #94a3b8;       /* maintenance legend dot */
   --radius: 1.25rem;
   --radius-xl: 1.75rem;
   --radius-pill: 999px;
@@ -40,6 +40,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
+/* Black page behind the cream portal shell. */
 body {
   font-family: var(--font);
   background: var(--bg);
@@ -55,6 +56,7 @@ body::before,
 body::after { display: none !important; }
 
 a { color: inherit; text-decoration: none; }
+/* Teal text links inside a portal. */
 a.link { color: #0f766e; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
 
 h1, h2, h3, .display {
@@ -67,12 +69,13 @@ h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); }
 h2 { font-size: 1.35rem; }
 h3 { font-size: 1.05rem; }
 
+/* Grey helper text. */
 .text-muted { color: var(--muted); }
 .text-sm { font-size: 0.875rem; }
 .text-xs { font-size: 0.75rem; color: var(--muted); }
 .muted { color: var(--muted); }
 
-/* Portal pages: larger type for demos / viva / projector */
+/* Portal pages: larger type */
 .shell,
 .staff-shell {
   font-size: 1.2rem;
@@ -166,14 +169,17 @@ h3 { font-size: 1.05rem; }
 .staff-shell .field {
   margin-bottom: 1.1rem;
 }
+/* Date, hour, minute, and AM/PM row on the booking form. */
 .time-pick {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) 0.72fr 0.72fr 0.9fr;
   gap: 0.45rem;
 }
+/* Past hours and minutes in that booking row. Grey, not selectable. */
 .time-pick select option:disabled {
   color: #b5b5b5;
 }
+/* Number box that has a negative or blocked value. Greyed out. */
 .shell input[type="number"]:out-of-range,
 .shell input.num-blocked,
 .staff-shell input[type="number"]:out-of-range,
@@ -185,6 +191,7 @@ h3 { font-size: 1.05rem; }
   border-color: #c8c4bc;
 }
 
+/* Dark overlay behind a confirm or form dialog. */
 .ui-dialog-back {
   position: fixed;
   inset: 0;
@@ -195,6 +202,7 @@ h3 { font-size: 1.05rem; }
   padding: 1.25rem;
   background: rgba(5, 5, 5, 0.55);
 }
+/* White dialog card: Delete slot, Edit multiplier, reschedule, reviews. */
 .ui-dialog {
   width: min(460px, 100%);
   background: #fff;
@@ -209,6 +217,7 @@ h3 { font-size: 1.05rem; }
   font-weight: 800;
   margin-bottom: 0.35rem;
 }
+/* Grey sentence inside that dialog. */
 .ui-dialog > p {
   color: #6b6b6b;
   margin-bottom: 1rem;
@@ -222,6 +231,7 @@ h3 { font-size: 1.05rem; }
   height: 2.85rem;
 }
 .ui-dialog textarea { height: auto; min-height: 6.5rem; }
+/* Red error line inside a dialog. */
 .ui-dialog-err {
   background: #fef2f2;
   border: 1px solid #fecaca;
@@ -232,6 +242,7 @@ h3 { font-size: 1.05rem; }
   font-weight: 600;
   margin-bottom: 0.85rem;
 }
+/* Cancel and confirm buttons at the bottom of a dialog. */
 .ui-dialog-actions {
   display: flex;
   justify-content: flex-end;
@@ -241,8 +252,10 @@ h3 { font-size: 1.05rem; }
 .ui-dialog-actions .btn { height: 2.7rem; font-size: 1rem; padding: 0 1.2rem; }
 
 /* —— Loader —— */
+/* Hide the page until the splash finishes. */
 html.pf-loading body > *:not(#pf-loader) { visibility: hidden; }
 
+/* Full-screen black splash while a page loads. */
 #pf-loader {
   position: fixed;
   inset: 0;
@@ -266,6 +279,7 @@ html.pf-loading body > *:not(#pf-loader) { visibility: hidden; }
   font-weight: 800;
   letter-spacing: -0.04em;
 }
+/* Lime "ED" in the splash wordmark. */
 .pf-loader-brand em {
   font-style: normal;
   color: var(--lime);
@@ -278,6 +292,7 @@ html.pf-loading body > *:not(#pf-loader) { visibility: hidden; }
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
+/* Lime bar that sweeps across the splash. */
 .pf-loader-bar span {
   display: block;
   height: 100%;
@@ -324,6 +339,7 @@ html.pf-ready [data-reveal] {
   max-width: 1180px;
 }
 
+/* Customer portal: sidebar on the left, page on the right. */
 .shell {
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -344,6 +360,7 @@ html.pf-ready [data-reveal] {
   }
 }
 
+/* Left sidebar on the customer portal. */
 .sidebar {
   background: rgba(255,255,255,0.55);
   border-right: 1px solid var(--border);
@@ -353,12 +370,14 @@ html.pf-ready [data-reveal] {
   gap: 1.4rem;
 }
 
+/* parkED name at the top of the customer sidebar. */
 .brand {
   font-weight: 800;
   font-size: 1.2rem;
   letter-spacing: -0.03em;
   padding: 0.2rem 0.45rem;
 }
+/* Teal "ED" in that sidebar name. */
 .brand em {
   font-style: normal;
   color: #0f766e;
@@ -370,6 +389,7 @@ html.pf-ready [data-reveal] {
   gap: 0.25rem;
   flex: 1;
 }
+/* Sidebar links: Book, Map, Pay, Loyalty, and the rest. Grey until selected. */
 .side-nav a,
 .side-nav button.nav-item {
   display: flex;
@@ -393,12 +413,14 @@ html.pf-ready [data-reveal] {
   background: #fff;
   color: var(--ink);
 }
+/* Black pill — the sidebar link that is selected. */
 .side-nav a.active,
 .side-nav button.nav-item.active {
   background: var(--ink);
   color: #fff;
 }
 
+/* Sign out row at the bottom of the sidebar. */
 .side-foot {
   border-top: 1px solid var(--border);
   padding-top: 1rem;
@@ -425,6 +447,7 @@ html.pf-ready [data-reveal] {
   width: 100%;
 }
 
+/* Manager and attendant top bar: name on the left, Sign out on the right. */
 .staff-shell .top-simple {
   display: flex;
   align-items: center;
@@ -448,6 +471,7 @@ html.pf-ready [data-reveal] {
   box-sizing: border-box;
 }
 
+/* Attendant check-in card, centred on the page. */
 .staff-main.gate {
   display: flex;
   justify-content: center;
@@ -457,6 +481,7 @@ html.pf-ready [data-reveal] {
   width: min(520px, 100%);
 }
 
+/* Cream page used by a few standalone screens. */
 .wrap {
   margin: 0 auto;
   padding: 1.25rem 1.25rem 2.5rem;
@@ -467,6 +492,7 @@ html.pf-ready [data-reveal] {
 }
 
 /* —— Buttons —— */
+/* Pick the class on the button in the HTML, then change background/color below. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -487,12 +513,14 @@ html.pf-ready [data-reveal] {
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
 
+/* Black buttons (Sign out, primary actions) */
 .btn-primary {
   background: var(--ink);
   color: #fff;
 }
 .btn-primary:hover { background: #222; }
 
+/* Lime buttons: Continue, Create slot, Book, Save, Generate report */
 .btn-accent,
 .btn.accent {
   background: var(--lime);
@@ -501,18 +529,21 @@ html.pf-ready [data-reveal] {
 }
 .btn-accent:hover { filter: brightness(0.98); }
 
+/* White buttons with a border (Add floor, Update slot) */
 .btn-secondary,
 .btn.secondary {
   background: #fff;
   color: var(--ink);
   border-color: var(--border);
 }
+/* Outline buttons (Delete, Edit, Refresh, Cancel) */
 .btn-outline {
   background: transparent;
   border-color: var(--border);
   color: var(--ink);
 }
 .btn-outline:hover { background: #fff; }
+/* Ghost text buttons: small links that are not filled. */
 .btn-ghost,
 .btn.linkish,
 button.linkish {
@@ -528,14 +559,17 @@ button.linkish {
 }
 .btn-ghost:hover,
 button.linkish:hover { color: var(--ink); background: #fff; }
+/* Red confirm button inside the delete dialog */
 .btn-destructive,
 .btn.danger { background: var(--red); color: #fff; }
+/* Orange warning button */
 .btn-warn,
 .btn.warn { background: var(--orange); color: #fff; }
 .btn-block { width: 100%; }
 .btn-sm { height: 2.1rem; padding: 0 0.85rem; font-size: 0.8rem; }
 
 /* —— Cards —— */
+/* White card that holds a form or a table. */
 .card,
 .panel {
   background: var(--card);
@@ -546,6 +580,7 @@ button.linkish:hover { color: var(--ink); background: #fff; }
   padding: 1.25rem 1.3rem;
   margin-bottom: 1rem;
 }
+/* Dark card: ratings and the highlighted revenue number. */
 .card.dark,
 .panel.dark {
   background: var(--card-dark);
@@ -565,6 +600,7 @@ button.linkish:hover { color: var(--ink); background: #fff; }
 .page-title p { margin-top: 0.35rem; }
 
 /* —— Forms —— */
+/* One labelled input on a portal form. */
 .field { margin-bottom: 0.9rem; }
 label {
   display: block;
@@ -574,6 +610,7 @@ label {
   margin-bottom: 0.35rem;
   letter-spacing: 0.02em;
 }
+/* Text boxes, dropdowns, and text areas on portal forms. */
 input, select, textarea {
   width: 100%;
   height: 2.55rem;
@@ -594,12 +631,14 @@ textarea {
   padding: 0.75rem 0.9rem;
   resize: vertical;
 }
+/* Lime ring around the input you are typing in. */
 input:focus, select:focus, textarea:focus {
   border-color: #111;
   box-shadow: 0 0 0 3px rgba(212, 255, 0, 0.35);
 }
 
 /* —— Alerts / badges —— */
+/* Message strip under a form. */
 .msg, .alert {
   padding: 0.8rem 0.95rem;
   border-radius: 0.9rem;
@@ -608,11 +647,13 @@ input:focus, select:focus, textarea:focus {
   margin-bottom: 0.9rem;
   border: 1px solid transparent;
 }
+/* Red error strip, including the login server-error line. */
 .msg.err, .alert-destructive {
   background: #fef2f2;
   border-color: #fecaca;
   color: #991b1b;
 }
+/* Green success strip. */
 .msg.ok, .alert-success {
   background: #ecfdf5;
   border-color: #a7f3d0;
@@ -630,10 +671,10 @@ input:focus, select:focus, textarea:focus {
   background: #fff;
   color: var(--ink);
 }
-.badge-ok { background: #d4ff00; border-color: #d4ff00; }
-.badge-warn { background: #ffedd5; border-color: #fed7aa; color: #9a3412; }
-.badge-danger { background: #fee2e2; border-color: #fecaca; color: #991b1b; }
-.badge-muted { background: #e8e6e0; color: var(--muted); }
+.badge-ok { background: #d4ff00; border-color: #d4ff00; }          /* lime pill: signed-in role, open status */
+.badge-warn { background: #ffedd5; border-color: #fed7aa; color: #9a3412; } /* orange pill: warning status */
+.badge-danger { background: #fee2e2; border-color: #fecaca; color: #991b1b; } /* red pill: failed or closed status */
+.badge-muted { background: #e8e6e0; color: var(--muted); }       /* grey pill */
 
 /* —— Table —— */
 .table-wrap { overflow-x: auto; }
@@ -712,11 +753,13 @@ tr:last-child td { border-bottom: 0; }
   font-size: 0.9rem;
   line-height: 1.45;
 }
+/* Your own message in an inquiry thread. Black bubble. */
 .inq-msg.you {
   align-self: flex-end;
   background: #1a1a1a;
   color: #fff;
 }
+/* Staff reply in an inquiry thread. White bubble. */
 .inq-msg.staff {
   align-self: flex-start;
   background: #fff;
@@ -729,6 +772,7 @@ tr:last-child td { border-bottom: 0; }
   margin-bottom: 0.25rem;
   font-weight: 600;
 }
+/* Row of the inquiry you have open. Light green. */
 tr.inq-row-active td {
   background: #f0fde0;
 }
@@ -737,6 +781,7 @@ tr.inq-row-active td {
 .spacer { flex: 1; }
 
 /* —— Slot map (customer) —— */
+/* Small colour key above an older slot grid. */
 .legend {
   display: flex;
   gap: 0.85rem;
@@ -754,10 +799,10 @@ tr.inq-row-active td {
   margin-right: 0.3rem;
   vertical-align: middle;
 }
-.legend .a { background: var(--green); }
-.legend .r { background: var(--red); }
-.legend .o { background: var(--orange); }
-.legend .m { background: var(--slate); }
+.legend .a { background: var(--green); } /* available dot */
+.legend .r { background: var(--red); }    /* reserved dot */
+.legend .o { background: var(--orange); } /* occupied dot */
+.legend .m { background: var(--slate); }  /* maintenance dot */
 
 .floor-block { margin-bottom: 1.25rem; }
 .floor-block h3 {
@@ -786,13 +831,14 @@ tr.inq-row-active td {
 }
 .slot strong { display: block; font-size: 0.95rem; margin-bottom: 0.15rem; }
 .slot:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-.slot.selected { outline: 3px solid var(--lime); outline-offset: 2px; }
-.slot-available { background: linear-gradient(165deg, #d9f99d, #bbf7d0); color: #14532d; }
-.slot-reserved { background: linear-gradient(165deg, #fecaca, #fda4af); color: #7f1d1d; }
-.slot-occupied { background: linear-gradient(165deg, #fed7aa, #fdba74); color: #7c2d12; }
-.slot-maintenance { background: linear-gradient(165deg, #e2e8f0, #cbd5e1); color: #334155; cursor: not-allowed; }
+.slot.selected { outline: 3px solid var(--lime); outline-offset: 2px; } /* lime outline on the bay you picked */
+.slot-available { background: linear-gradient(165deg, #d9f99d, #bbf7d0); color: #14532d; } /* available bay */
+.slot-reserved { background: linear-gradient(165deg, #fecaca, #fda4af); color: #7f1d1d; } /* reserved bay */
+.slot-occupied { background: linear-gradient(165deg, #fed7aa, #fdba74); color: #7c2d12; } /* occupied bay */
+.slot-maintenance { background: linear-gradient(165deg, #e2e8f0, #cbd5e1); color: #334155; cursor: not-allowed; } /* maintenance bay */
 
 /* Result panels — replace console/JSON dumps */
+/* Quote, receipt, and report box under a form. */
 .result-panel {
   background: #fff;
   border: 1px solid var(--border);
@@ -819,6 +865,7 @@ tr.inq-row-active td {
 @media (max-width: 700px) {
   .result-stats { grid-template-columns: 1fr; }
 }
+/* Cream number tile inside a report. */
 .result-stat {
   background: #f6f4ee;
   border-radius: 0.95rem;
@@ -837,6 +884,7 @@ tr.inq-row-active td {
   margin-top: 0.25rem;
   letter-spacing: -0.02em;
 }
+/* Black tile with the lime total in a report. */
 .result-stat.accent {
   background: #111;
   color: #fafafa;
@@ -882,6 +930,7 @@ pre.quote {
 }
 
 /* —— Auth —— */
+/* Login and register page: dark panel on the left, form on the right. */
 .auth-page {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -896,6 +945,7 @@ pre.quote {
   .auth-page { grid-template-columns: 1fr; }
   .auth-aside { display: none; }
 }
+/* Dark left panel on login and register. */
 .auth-aside {
   padding: 2.25rem;
   background:
@@ -922,6 +972,7 @@ pre.quote {
   padding: 2rem 1.5rem;
   background: var(--shell-2);
 }
+/* White login or register card. */
 .auth-box {
   width: 100%;
   max-width: 400px;
@@ -948,6 +999,7 @@ html.pf-ready .staff-main > .card {
 }
 
 /* landing body should not get black padding twice */
+/* Home page body. The cream sheet sits on this black background. */
 body.landing {
   padding: 0;
   background: #050505;

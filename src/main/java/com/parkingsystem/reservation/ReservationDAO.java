@@ -92,6 +92,7 @@ public class ReservationDAO {
     }
 
     public List<Reservation> listByUser(int userId) {
+        deleteCancelledForUser(userId);
         String sql = "SELECT * FROM reservations WHERE user_id = ? ORDER BY created_at DESC";
         List<Reservation> list = new ArrayList<>();
         try (Connection c = DBConnection.getConnection();
@@ -106,6 +107,45 @@ public class ReservationDAO {
             throw new RuntimeException("list reservations failed", e);
         }
         return list;
+    }
+
+    /** Remove a booking and the payment/feedback rows that point at it. */
+    public void delete(int id) {
+        String[] sqls = {
+                "DELETE FROM feedback WHERE reservation_id = ?",
+                "DELETE FROM payments WHERE reservation_id = ?",
+                "DELETE FROM reservations WHERE reservation_id = ?"
+        };
+        try (Connection c = DBConnection.getConnection()) {
+            for (String sql : sqls) {
+                try (PreparedStatement ps = c.prepareStatement(sql)) {
+                    ps.setInt(1, id);
+                    ps.executeUpdate();
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("delete reservation failed", e);
+        }
+    }
+
+    /** Bookings already marked cancelled should not stay in the list or the table. */
+    public void deleteCancelledForUser(int userId) {
+        String sql = "SELECT reservation_id FROM reservations WHERE user_id = ? AND status = 'CANCELLED'";
+        List<Integer> ids = new ArrayList<>();
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ids.add(rs.getInt("reservation_id"));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("list cancelled reservations failed", e);
+        }
+        for (int id : ids) {
+            delete(id);
+        }
     }
 
     public boolean updateStatus(int id, String status) {

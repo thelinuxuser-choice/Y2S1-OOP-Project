@@ -92,9 +92,9 @@ public class ReservationService {
         if (paid != null && "PAID".equals(paid.getStatus())) {
             paymentService.refund(paid.getPaymentId(), userId);
         }
-        dao.updateStatus(reservationId, "CANCELLED");
-        r.setStatus("CANCELLED");
         subject.notifyObservers(r, "CANCELLED");
+        dao.delete(reservationId);
+        r.setStatus("CANCELLED");
         return r;
     }
 

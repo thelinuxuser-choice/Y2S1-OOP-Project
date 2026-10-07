@@ -1,15 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap");
 
-/* Tabela-inspired premium landing for ParkFlow */
+/* Home page colours. Change one here and every piece that uses it updates. */
 :root {
-  --ink: #111111;
-  --muted: #6b6b6b;
-  --shell: #eceae4;
-  --card: #ffffff;
-  --card-dark: #1a1a1a;
-  --accent: #c8f542;
-  --teal: #0d9488;
-  --line: rgba(17, 17, 17, 0.08);
+  --ink: #111111;                         /* main text, black buttons, step numbers */
+  --muted: #6b6b6b;                       /* grey helper text */
+  --shell: #eceae4;                       /* cream page inside the black edge */
+  --card: #ffffff;                        /* white cards */
+  --card-dark: #1a1a1a;                   /* dark quote card and the closing band */
+  --accent: #c8f542;                      /* lime: Get started, logo dots, bullet dots */
+  --teal: #0d9488;                        /* teal numbers in the Benefits stats */
+  --line: rgba(17, 17, 17, 0.08);         /* light borders on cards */
   --radius-xl: 2rem;
   --radius-lg: 1.5rem;
   --radius-md: 1rem;
@@ -17,8 +17,15 @@
   --display: "Fraunces", Georgia, serif;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
+/* Black strip around the home page. */
 body.landing {
   font-family: var(--font);
   background: #050505;
@@ -28,15 +35,23 @@ body.landing {
   overflow-x: hidden;
 }
 
-a { color: inherit; text-decoration: none; }
-img { max-width: 100%; display: block; }
+a {
+  color: inherit;
+  text-decoration: none;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
 
 /* —— page frame —— */
+/* Outer padding of the home page. */
 .lp-frame {
   min-height: 100vh;
   padding: clamp(0.75rem, 2vw, 1.25rem);
 }
 
+/* Cream rounded sheet that holds the whole home page. */
 .lp-shell {
   background: var(--shell);
   border-radius: clamp(1.25rem, 3vw, 2.25rem);
@@ -51,6 +66,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* —— header —— */
+/* Sticky top bar: logo, links, Sign in. */
 .lp-header {
   display: flex;
   align-items: center;
@@ -62,12 +78,15 @@ img { max-width: 100%; display: block; }
   background: rgba(236, 234, 228, 0.82);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.3s, background 0.3s;
+  transition:
+    border-color 0.3s,
+    background 0.3s;
 }
 .lp-header.is-scrolled {
   border-bottom-color: var(--line);
 }
 
+/* parkED wordmark, top-left. */
 .lp-logo {
   display: inline-flex;
   align-items: center;
@@ -76,6 +95,7 @@ img { max-width: 100%; display: block; }
   font-size: 1.05rem;
   letter-spacing: 0.04em;
 }
+/* Black circle beside the logo word. */
 .lp-logo-mark {
   width: 28px;
   height: 28px;
@@ -85,13 +105,16 @@ img { max-width: 100%; display: block; }
   place-items: center;
   gap: 3px;
 }
+/* Lime dots inside the logo circle. */
 .lp-logo-mark i {
   width: 4px;
   height: 4px;
   border-radius: 50%;
   background: var(--accent);
   display: block;
-  box-shadow: 6px 0 0 var(--accent), -6px 0 0 var(--accent);
+  box-shadow:
+    6px 0 0 var(--accent),
+    -6px 0 0 var(--accent);
 }
 
 .lp-nav {
@@ -99,14 +122,18 @@ img { max-width: 100%; display: block; }
   gap: 1.35rem;
   align-items: center;
 }
+/* Header links: Benefits, Flow, Features. Grey until hover. */
 .lp-nav a {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--muted);
   transition: color 0.2s;
 }
-.lp-nav a:hover { color: var(--ink); }
+.lp-nav a:hover {
+  color: var(--ink);
+}
 
+/* Black round menu button. Shows on small screens. */
 .lp-menu-btn {
   width: 44px;
   height: 44px;
@@ -117,9 +144,14 @@ img { max-width: 100%; display: block; }
   cursor: pointer;
   display: grid;
   place-items: center;
-  transition: transform 0.2s, background 0.2s;
+  transition:
+    transform 0.2s,
+    background 0.2s;
 }
-.lp-menu-btn:hover { transform: scale(1.05); background: #222; }
+.lp-menu-btn:hover {
+  transform: scale(1.05);
+  background: #222;
+}
 .lp-menu-btn .dots {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -132,17 +164,23 @@ img { max-width: 100%; display: block; }
   background: #fff;
 }
 
+/* Sign in button in the header. */
 .lp-signin-desktop {
   height: 40px;
   border-color: rgba(17, 17, 17, 0.15);
   color: #111;
 }
 @media (max-width: 860px) {
-  .lp-nav { display: none; }
-  .lp-signin-desktop { display: none; }
+  .lp-nav {
+    display: none;
+  }
+  .lp-signin-desktop {
+    display: none;
+  }
 }
 
 /* —— hero —— */
+/* Top block: headline on the left, icons and sentence on the right. */
 .lp-hero {
   padding: 1.75rem clamp(1.15rem, 3.2vw, 2rem) 1.85rem;
 }
@@ -155,9 +193,13 @@ img { max-width: 100%; display: block; }
   margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
 }
 @media (max-width: 900px) {
-  .lp-hero-top { grid-template-columns: 1fr; gap: 1.35rem; }
+  .lp-hero-top {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+  }
 }
 
+/* Big headline at the top of the home page. */
 .lp-h1 {
   font-size: clamp(2.75rem, 7.2vw, 4.75rem);
   line-height: 1.22;
@@ -204,6 +246,7 @@ img { max-width: 100%; display: block; }
   overflow: visible;
   z-index: 1;
 }
+/* Yellow hand-drawn underline under the word "Ultimate". */
 .lp-h1 .scribble path {
   fill: none;
   stroke: #f5d547;
@@ -217,10 +260,15 @@ img { max-width: 100%; display: block; }
 }
 
 @keyframes word-up {
-  to { transform: translateY(0); opacity: 1; }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 @keyframes draw-scribble {
-  to { stroke-dashoffset: 0; }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .lp-hero-right {
@@ -233,6 +281,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   gap: 0.55rem;
 }
+/* White round icons beside the headline (map, reserve, pay). */
 .lp-hero-icon {
   width: 44px;
   height: 44px;
@@ -242,13 +291,14 @@ img { max-width: 100%; display: block; }
   display: grid;
   place-items: center;
   color: var(--ink);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
 }
 .lp-hero-icon svg {
   width: 20px;
   height: 20px;
   display: block;
 }
+/* Grey sentence under those icons. */
 .lp-hero-sub {
   color: var(--muted);
   font-size: 1.05rem;
@@ -257,12 +307,13 @@ img { max-width: 100%; display: block; }
   font-weight: 500;
 }
 
-/* bento grid */
+/* Spare card grid. Not on the current home page. */
 .lp-bento {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 0.85rem;
 }
+/* White card in that spare grid. */
 .lp-tile {
   background: var(--card);
   border-radius: var(--radius-xl);
@@ -270,30 +321,47 @@ img { max-width: 100%; display: block; }
   min-height: 220px;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.4);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.05);
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s;
 }
 .lp-tile:hover {
   transform: translateY(-6px);
-  box-shadow: 0 28px 55px rgba(0,0,0,0.08);
+  box-shadow: 0 28px 55px rgba(0, 0, 0, 0.08);
 }
+/* Dark version of that spare card. */
 .lp-tile.dark {
   background: var(--card-dark);
   color: #f5f5f5;
 }
-.lp-tile.span-5 { grid-column: span 5; }
-.lp-tile.span-4 { grid-column: span 4; }
-.lp-tile.span-3 { grid-column: span 3; }
-.lp-tile.span-7 { grid-column: span 7; }
-.lp-tile.span-8 { grid-column: span 8; }
-.lp-tile.span-12 { grid-column: span 12; }
+.lp-tile.span-5 {
+  grid-column: span 5;
+}
+.lp-tile.span-4 {
+  grid-column: span 4;
+}
+.lp-tile.span-3 {
+  grid-column: span 3;
+}
+.lp-tile.span-7 {
+  grid-column: span 7;
+}
+.lp-tile.span-8 {
+  grid-column: span 8;
+}
+.lp-tile.span-12 {
+  grid-column: span 12;
+}
 @media (max-width: 900px) {
   .lp-tile.span-5,
   .lp-tile.span-4,
   .lp-tile.span-3,
   .lp-tile.span-7,
-  .lp-tile.span-8 { grid-column: span 12; }
+  .lp-tile.span-8 {
+    grid-column: span 12;
+  }
 }
 
 .lp-cta-stack {
@@ -303,6 +371,7 @@ img { max-width: 100%; display: block; }
   height: 100%;
   justify-content: space-between;
 }
+/* White pill inside the spare card. */
 .lp-pill {
   background: #fff;
   border-radius: 999px;
@@ -310,7 +379,7 @@ img { max-width: 100%; display: block; }
   font-weight: 600;
   font-size: 1.05rem;
   border: 1px solid var(--line);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
 }
 .lp-cta-row {
   display: flex;
@@ -318,6 +387,7 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
   gap: 0.75rem;
 }
+/* Lime round arrow button inside the spare card. */
 .lp-round-cta {
   width: 64px;
   height: 64px;
@@ -330,10 +400,14 @@ img { max-width: 100%; display: block; }
   font-size: 1.4rem;
   cursor: pointer;
   flex-shrink: 0;
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
   box-shadow: 0 12px 28px rgba(200, 245, 66, 0.35);
 }
-.lp-round-cta:hover { transform: scale(1.08) rotate(-8deg); }
+.lp-round-cta:hover {
+  transform: scale(1.08) rotate(-8deg);
+}
 
 .lp-mock-title {
   font-size: 0.75rem;
@@ -343,13 +417,16 @@ img { max-width: 100%; display: block; }
   margin-bottom: 0.75rem;
   font-weight: 600;
 }
-.lp-tile.dark .lp-mock-title { color: #9ca3af; }
+.lp-tile.dark .lp-mock-title {
+  color: #9ca3af;
+}
 
 .lp-map-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.45rem;
 }
+/* Tiny demo bay in the spare card. Grey when it has no status. */
 .lp-bay {
   aspect-ratio: 1.15;
   border-radius: 0.85rem;
@@ -359,9 +436,21 @@ img { max-width: 100%; display: block; }
   font-weight: 700;
   background: #f3f4f6;
 }
-.lp-bay.free { background: #d1fae5; color: #065f46; }
-.lp-bay.hold { background: #fecaca; color: #991b1b; }
-.lp-bay.busy { background: #fed7aa; color: #9a3412; }
+/* Free bay in that tiny demo. Green. */
+.lp-bay.free {
+  background: #d1fae5;
+  color: #065f46;
+}
+/* Held bay in that tiny demo. Red. */
+.lp-bay.hold {
+  background: #fecaca;
+  color: #991b1b;
+}
+/* Busy bay in that tiny demo. Orange. */
+.lp-bay.busy {
+  background: #fed7aa;
+  color: #9a3412;
+}
 
 .lp-map-card {
   display: flex;
@@ -391,17 +480,35 @@ img { max-width: 100%; display: block; }
   margin-right: 0.28rem;
   vertical-align: middle;
 }
-.lp-map-legend .lg { background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18); }
-.lp-map-legend .lr { background: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16); }
-.lp-map-legend .lo { background: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16); }
-.lp-map-legend .lm { background: #94a3b8; box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2); }
+/* Green legend dot: available. */
+.lp-map-legend .lg {
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+/* Red legend dot: reserved. */
+.lp-map-legend .lr {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+}
+/* Orange legend dot: occupied. */
+.lp-map-legend .lo {
+  background: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
+}
+/* Grey legend dot: maintenance. */
+.lp-map-legend .lm {
+  background: #94a3b8;
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
 
+/* Grid of sample bays inside the Features tab. */
 .lp-slot-map {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.55rem;
   flex: 1;
 }
+/* One sample bay in that Features panel. */
 .lp-slot {
   border: 0;
   cursor: default;
@@ -413,7 +520,10 @@ img { max-width: 100%; display: block; }
   justify-content: center;
   gap: 0.4rem;
   min-height: 88px;
-  transition: transform 0.25s, box-shadow 0.25s, filter 0.25s;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s,
+    filter 0.25s;
   position: relative;
   overflow: hidden;
 }
@@ -421,23 +531,28 @@ img { max-width: 100%; display: block; }
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.55), transparent 55%);
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba(255, 255, 255, 0.55),
+    transparent 55%
+  );
   pointer-events: none;
 }
 .lp-slot:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 14px 28px rgba(0,0,0,0.1);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1);
 }
+/* Round icon on a sample bay in Features. */
 .lp-slot-icon {
   width: 34px;
   height: 34px;
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: rgba(255,255,255,0.55);
+  background: rgba(255, 255, 255, 0.55);
   position: relative;
   z-index: 1;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
 }
 .lp-slot-icon svg {
   width: 18px;
@@ -451,63 +566,88 @@ img { max-width: 100%; display: block; }
   letter-spacing: 0.04em;
 }
 
+/* Available sample bay in Features. Green. */
 /* Open = green */
 .lp-slot.open {
   background: linear-gradient(160deg, #86efac 0%, #22c55e 100%);
   color: #14532d;
 }
-.lp-slot.open .lp-slot-icon { color: #166534; }
+.lp-slot.open .lp-slot-icon {
+  color: #166534;
+}
 
+/* Reserved sample bay in Features. Red. */
 /* Reserved = red */
 .lp-slot.reserved {
   background: linear-gradient(160deg, #fca5a5 0%, #ef4444 100%);
   color: #7f1d1d;
 }
-.lp-slot.reserved .lp-slot-icon { color: #991b1b; }
+.lp-slot.reserved .lp-slot-icon {
+  color: #991b1b;
+}
 
+/* Occupied sample bay in Features. Orange. */
 /* Occupied = orange */
 .lp-slot.occupied {
   background: linear-gradient(160deg, #fdba74 0%, #f97316 100%);
   color: #7c2d12;
 }
-.lp-slot.occupied .lp-slot-icon { color: #9a3412; }
+.lp-slot.occupied .lp-slot-icon {
+  color: #9a3412;
+}
 
+/* Maintenance sample bay in Features. Grey. */
 /* Maintenance = slate */
 .lp-slot.maint {
   background: linear-gradient(160deg, #cbd5e1 0%, #94a3b8 100%);
   color: #334155;
 }
-.lp-slot.maint .lp-slot-icon { color: #475569; }
+.lp-slot.maint .lp-slot-icon {
+  color: #475569;
+}
 
+/* Text colour of those sample bays when the Features panel is dark. */
 /* dark shell variant */
 .dark-map .lp-slot {
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 .dark-map .lp-slot-icon {
-  background: rgba(0,0,0,0.18);
+  background: rgba(0, 0, 0, 0.18);
   box-shadow: none;
 }
-.dark-map .lp-slot.open { color: #ecfdf5; }
-.dark-map .lp-slot.reserved { color: #fef2f2; }
-.dark-map .lp-slot.occupied { color: #fff7ed; }
-.dark-map .lp-slot.maint { color: #f8fafc; }
+.dark-map .lp-slot.open {
+  color: #ecfdf5;
+}
+.dark-map .lp-slot.reserved {
+  color: #fef2f2;
+}
+.dark-map .lp-slot.occupied {
+  color: #fff7ed;
+}
+.dark-map .lp-slot.maint {
+  color: #f8fafc;
+}
 .dark-map .lp-slot.open .lp-slot-icon,
 .dark-map .lp-slot.reserved .lp-slot-icon,
 .dark-map .lp-slot.occupied .lp-slot-icon,
-.dark-map .lp-slot.maint .lp-slot-icon { color: #fff; }
+.dark-map .lp-slot.maint .lp-slot-icon {
+  color: #fff;
+}
 
+/* Teal "ED" in the parkED logo. */
 .lp-logo em {
   font-style: normal;
   color: var(--teal);
   font-weight: 700;
 }
 
+/* Cream panel around the live map on the home page. */
 .lp-avail {
   background: #f6f4ee;
   border-radius: 2rem;
   padding: 1.4rem 1.4rem 1.55rem;
   border: 1px solid var(--line);
-  box-shadow: 0 22px 50px rgba(0,0,0,0.06);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.06);
 }
 .sam-head {
   display: flex;
@@ -517,6 +657,7 @@ img { max-width: 100%; display: block; }
   flex-wrap: wrap;
   margin-bottom: 1.15rem;
 }
+/* Green LIVE label, top-left of the home-page map. */
 .sam-live {
   display: inline-flex;
   align-items: center;
@@ -526,17 +667,21 @@ img { max-width: 100%; display: block; }
   letter-spacing: 0.14em;
   color: #16a34a;
 }
+/* Pulsing green dot beside LIVE. */
 .sam-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: #22c55e;
-  box-shadow: 0 0 0 4px rgba(34,197,94,0.2);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
   animation: sam-pulse 1.6s ease-in-out infinite;
 }
 @keyframes sam-pulse {
-  50% { box-shadow: 0 0 0 7px rgba(34,197,94,0.08); }
+  50% {
+    box-shadow: 0 0 0 7px rgba(34, 197, 94, 0.08);
+  }
 }
+/* "Slot Availability Map" heading on the home page. */
 .sam-title {
   font-size: clamp(1.6rem, 3.5vw, 2.15rem);
   font-weight: 700;
@@ -544,6 +689,7 @@ img { max-width: 100%; display: block; }
   margin-top: 0.2rem;
   font-family: var(--font);
 }
+/* Grey subtitle under that heading. */
 .sam-sub {
   margin-top: 0.25rem;
   color: var(--muted);
@@ -555,6 +701,7 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 0.75rem;
 }
+/* Clock, top-right of the home-page map. */
 .sam-clock {
   font-size: 1.55rem;
   font-weight: 700;
@@ -562,12 +709,14 @@ img { max-width: 100%; display: block; }
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
+/* Grey date under the clock. */
 .sam-date {
   font-size: 0.8rem;
   color: var(--muted);
   font-weight: 500;
   text-align: right;
 }
+/* Lime round refresh button next to the clock. */
 .sam-refresh {
   width: 48px;
   height: 48px;
@@ -578,12 +727,20 @@ img { max-width: 100%; display: block; }
   cursor: pointer;
   display: grid;
   place-items: center;
-  box-shadow: 0 10px 24px rgba(212,255,0,0.35);
+  box-shadow: 0 10px 24px rgba(212, 255, 0, 0.35);
   transition: transform 0.2s;
 }
-.sam-refresh:hover { transform: scale(1.06) rotate(-20deg); }
-.sam-refresh.spin svg { animation: sam-spin 0.7s ease; }
-@keyframes sam-spin { to { transform: rotate(360deg); } }
+.sam-refresh:hover {
+  transform: scale(1.06) rotate(-20deg);
+}
+.sam-refresh.spin svg {
+  animation: sam-spin 0.7s ease;
+}
+@keyframes sam-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .sam-toolbar {
   display: flex;
@@ -598,6 +755,7 @@ img { max-width: 100%; display: block; }
   flex-wrap: wrap;
   gap: 0.45rem;
 }
+/* White count pills: Reserved, Occupied, Maintenance. */
 .sam-count {
   border: 1px solid var(--line);
   background: #fff;
@@ -609,7 +767,11 @@ img { max-width: 100%; display: block; }
   cursor: pointer;
   color: #111;
 }
-.sam-count b { font-weight: 800; margin-right: 0.15rem; }
+.sam-count b {
+  font-weight: 800;
+  margin-right: 0.15rem;
+}
+/* Lime count pill — the Available count. */
 .sam-count.is-lime {
   background: #d4ff00;
   border-color: #d4ff00;
@@ -620,6 +782,7 @@ img { max-width: 100%; display: block; }
   font-weight: 600;
   color: var(--muted);
 }
+/* Grey track of the capacity bar. */
 .sam-cap-bar {
   margin-top: 0.35rem;
   height: 8px;
@@ -627,6 +790,7 @@ img { max-width: 100%; display: block; }
   background: #e5e4df;
   overflow: hidden;
 }
+/* Green fill inside the capacity bar. */
 .sam-cap-bar i {
   display: block;
   height: 100%;
@@ -642,6 +806,7 @@ img { max-width: 100%; display: block; }
   gap: 0.4rem;
   margin-bottom: 1.1rem;
 }
+/* Grey filter chip: All, Available, Reserved, Occupied, Maintenance. */
 .sam-filter {
   border: 0;
   background: #e8e6e0;
@@ -653,6 +818,7 @@ img { max-width: 100%; display: block; }
   font-weight: 650;
   cursor: pointer;
 }
+/* Black chip — the filter that is selected. */
 .sam-filter.active {
   background: #171717;
   color: #fff;
@@ -664,6 +830,7 @@ img { max-width: 100%; display: block; }
   align-items: center;
   margin-bottom: 0.85rem;
 }
+/* Green open-count pill on a floor header. */
 .sam-floor-pill {
   font-size: 0.72rem;
   font-weight: 700;
@@ -672,8 +839,9 @@ img { max-width: 100%; display: block; }
   padding: 0.25rem 0.6rem;
   color: #111;
 }
+/* Same pill on the dark Level 1 header. */
 .sam-floor-pill.dark {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #e5e5e5;
 }
 
@@ -683,7 +851,9 @@ img { max-width: 100%; display: block; }
   gap: 0.55rem;
 }
 @media (max-width: 700px) {
-  .sam-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sam-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .sam-slot {
@@ -694,14 +864,21 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
   gap: 0.15rem;
   position: relative;
-  transition: transform 0.25s, box-shadow 0.25s, opacity 0.25s, filter 0.25s;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s,
+    opacity 0.25s,
+    filter 0.25s;
   overflow: hidden;
 }
-.sam-slot.is-hidden { display: none; }
+.sam-slot.is-hidden {
+  display: none;
+}
 .sam-slot:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 28px rgba(0,0,0,0.1);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1);
 }
+/* Round icon in the corner of a live bay. */
 .sam-ico {
   width: 26px;
   height: 26px;
@@ -709,9 +886,10 @@ img { max-width: 100%; display: block; }
   display: grid;
   place-items: center;
   font-size: 0.78rem;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   margin-bottom: 0.25rem;
 }
+/* Bay code on a live tile, e.g. G-A1. */
 .sam-slot strong {
   font-size: 0.92rem;
   font-weight: 800;
@@ -732,27 +910,34 @@ img { max-width: 100%; display: block; }
   line-height: 1.25;
 }
 
+/* Available bay on the home-page map, ground floor. Green. */
 .sam-slot.open {
   background: linear-gradient(165deg, #d9f99d, #bbf7d0);
   color: #14532d;
 }
+/* Reserved bay on the home-page map. Red. */
 .sam-slot.reserved {
   background: linear-gradient(165deg, #fecaca, #fda4af);
   color: #7f1d1d;
 }
+/* Occupied bay on the home-page map. Orange. */
 .sam-slot.occupied {
   background: linear-gradient(165deg, #fed7aa, #fdba74);
   color: #7c2d12;
 }
+/* Maintenance bay on the home-page map. Grey. */
 .sam-slot.maint {
   background: linear-gradient(165deg, #e2e8f0, #cbd5e1);
   color: #334155;
 }
 
 .dark-floor .sam-slot {
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
-.dark-floor .sam-ico { background: rgba(0,0,0,0.18); }
+/* Bay icon on the dark Level 1 block. */
+.dark-floor .sam-ico {
+  background: rgba(0, 0, 0, 0.18);
+}
 
 .lp-avail-top {
   display: flex;
@@ -774,16 +959,21 @@ img { max-width: 100%; display: block; }
   gap: 0.9rem;
 }
 @media (max-width: 800px) {
-  .lp-avail-floors { grid-template-columns: 1fr; }
+  .lp-avail-floors {
+    grid-template-columns: 1fr;
+  }
 }
+/* Ground floor block on the home-page map. Cream. */
 .lp-avail-floor {
   background: var(--shell);
   border-radius: 1.35rem;
   padding: 1rem;
 }
+/* Level 1 block on the home-page map. Dark. */
 .lp-avail-floor.dark-floor {
   background: #171717;
 }
+/* Floor name on the home-page map, e.g. GROUND. */
 .lp-floor-label {
   font-size: 0.72rem;
   letter-spacing: 0.1em;
@@ -792,23 +982,28 @@ img { max-width: 100%; display: block; }
   font-weight: 700;
   margin-bottom: 0.75rem;
 }
-.dark-floor .lp-floor-label { color: #a1a1aa; }
+/* Floor name on the dark Level 1 block. */
+.dark-floor .lp-floor-label {
+  color: #a1a1aa;
+}
 .lp-slot-map-lg {
   min-height: 200px;
 }
 
+/* White table under Benefits. */
 .lp-benefits-table-wrap {
   margin-top: 1.75rem;
   background: #fff;
   border-radius: var(--radius-xl);
   border: 1px solid var(--line);
   overflow: hidden;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.05);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.05);
 }
 .lp-benefits-table {
   width: 100%;
   border-collapse: collapse;
 }
+/* Grey header row of the Benefits table. */
 .lp-benefits-table th {
   text-align: left;
   font-size: 0.72rem;
@@ -828,14 +1023,20 @@ img { max-width: 100%; display: block; }
   vertical-align: top;
   line-height: 1.4;
 }
-.lp-benefits-table tr:last-child td { border-bottom: 0; }
-.lp-benefits-table tbody tr:hover td { background: #fafaf8; }
+.lp-benefits-table tr:last-child td {
+  border-bottom: 0;
+}
+.lp-benefits-table tbody tr:hover td {
+  background: #fafaf8;
+}
 .lp-benefits-table td:first-child {
   font-weight: 700;
   white-space: nowrap;
 }
 @media (max-width: 700px) {
-  .lp-benefits-table td:first-child { white-space: normal; }
+  .lp-benefits-table td:first-child {
+    white-space: normal;
+  }
 }
 
 .lp-ribbon {
@@ -849,17 +1050,22 @@ img { max-width: 100%; display: block; }
   font-weight: 600;
   padding: 0.35rem 1.4rem;
   transform: rotate(-18deg);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   white-space: nowrap;
 }
 
-.lp-pay-lines { display: grid; gap: 0.55rem; margin-top: 0.5rem; }
+.lp-pay-lines {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+}
 .lp-pay-line {
   height: 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
+/* Lime fill of those bars in the Payment feature panel. */
 .lp-pay-line span {
   display: block;
   height: 100%;
@@ -870,10 +1076,23 @@ img { max-width: 100%; display: block; }
 .lp-tile.is-in .lp-pay-line span {
   animation: fill-bar 1.2s ease forwards;
 }
-.lp-pay-line:nth-child(1) span { animation-delay: 0.1s; --w: 78%; }
-.lp-pay-line:nth-child(2) span { animation-delay: 0.25s; --w: 54%; }
-.lp-pay-line:nth-child(3) span { animation-delay: 0.4s; --w: 92%; }
-@keyframes fill-bar { to { width: var(--w, 70%); } }
+.lp-pay-line:nth-child(1) span {
+  animation-delay: 0.1s;
+  --w: 78%;
+}
+.lp-pay-line:nth-child(2) span {
+  animation-delay: 0.25s;
+  --w: 54%;
+}
+.lp-pay-line:nth-child(3) span {
+  animation-delay: 0.4s;
+  --w: 92%;
+}
+@keyframes fill-bar {
+  to {
+    width: var(--w, 70%);
+  }
+}
 
 .lp-stat-big {
   font-size: clamp(2.4rem, 5vw, 3.4rem);
@@ -881,13 +1100,22 @@ img { max-width: 100%; display: block; }
   letter-spacing: -0.03em;
   margin-top: 0.4rem;
 }
-.lp-stat-label { color: var(--muted); font-size: 0.92rem; margin-top: 0.35rem; font-weight: 500; }
-.lp-tile.dark .lp-stat-label { color: #a1a1aa; }
+.lp-stat-label {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 0.35rem;
+  font-weight: 500;
+}
+.lp-tile.dark .lp-stat-label {
+  color: #a1a1aa;
+}
 
 /* —— sections —— */
+/* Benefits, Flow, and Features blocks down the home page. */
 .lp-section {
   padding: clamp(3.5rem, 8vw, 6rem) clamp(1rem, 3vw, 1.75rem);
 }
+/* Small label above a section title, e.g. BENEFITS. Lime dot in front. */
 .lp-section-label {
   display: inline-flex;
   align-items: center;
@@ -899,6 +1127,7 @@ img { max-width: 100%; display: block; }
   color: var(--muted);
   margin-bottom: 1rem;
 }
+/* Lime dot in front of those section labels. */
 .lp-section-label::before {
   content: "";
   width: 8px;
@@ -908,6 +1137,7 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 0 0 4px rgba(200, 245, 66, 0.25);
 }
 
+/* Big section heading, e.g. "Parking without the guesswork". */
 .lp-title {
   font-size: clamp(2.2rem, 5.5vw, 3.6rem);
   line-height: 1.02;
@@ -930,6 +1160,7 @@ img { max-width: 100%; display: block; }
   animation: word-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Grey paragraph under a section heading. */
 .lp-lead {
   margin-top: 1rem;
   color: var(--muted);
@@ -946,7 +1177,9 @@ img { max-width: 100%; display: block; }
   align-items: center;
 }
 @media (max-width: 900px) {
-  .lp-split { grid-template-columns: 1fr; }
+  .lp-split {
+    grid-template-columns: 1fr;
+  }
 }
 
 .lp-stats {
@@ -955,22 +1188,28 @@ img { max-width: 100%; display: block; }
   gap: 0.85rem;
 }
 @media (max-width: 700px) {
-  .lp-stats { grid-template-columns: 1fr; }
+  .lp-stats {
+    grid-template-columns: 1fr;
+  }
 }
+/* White stat cards in Benefits: 92%, 99%, 3. */
 .lp-stat-card {
   background: #fff;
   border-radius: var(--radius-lg);
   padding: 1.4rem 1.25rem;
   border: 1px solid var(--line);
   min-height: 160px;
-  box-shadow: 0 14px 34px rgba(0,0,0,0.04);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.04);
 }
 .lp-stat-card .num {
   font-size: clamp(2.4rem, 5vw, 3.2rem);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
-.lp-stat-card .num span { color: var(--teal); }
+/* Teal number inside a Benefits stat card. */
+.lp-stat-card .num span {
+  color: var(--teal);
+}
 .lp-stat-card p {
   margin-top: 0.45rem;
   color: var(--muted);
@@ -979,6 +1218,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* steps */
+/* Three white cards in the Flow section: 01, 02, 03. */
 .lp-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -986,8 +1226,11 @@ img { max-width: 100%; display: block; }
   margin-top: 2rem;
 }
 @media (max-width: 800px) {
-  .lp-steps { grid-template-columns: 1fr; }
+  .lp-steps {
+    grid-template-columns: 1fr;
+  }
 }
+/* One Flow card. */
 .lp-step {
   background: #fff;
   border-radius: var(--radius-xl);
@@ -997,6 +1240,7 @@ img { max-width: 100%; display: block; }
   position: relative;
   overflow: hidden;
 }
+/* Black circle with the lime step number. */
 .lp-step-no {
   width: 42px;
   height: 42px;
@@ -1013,15 +1257,21 @@ img { max-width: 100%; display: block; }
   font-weight: 600;
   margin-bottom: 0.45rem;
 }
-.lp-step p { color: var(--muted); font-weight: 500; line-height: 1.5; }
+.lp-step p {
+  color: var(--muted);
+  font-weight: 500;
+  line-height: 1.5;
+}
 
 /* feature tabs */
+/* Map, Book, Payment, Support chips in Features. */
 .lp-tabs {
   display: flex;
   gap: 0.45rem;
   flex-wrap: wrap;
   margin: 1.5rem 0 1.1rem;
 }
+/* White chip when that tab is not selected. */
 .lp-tab {
   border: 1px solid var(--line);
   background: #fff;
@@ -1034,11 +1284,13 @@ img { max-width: 100%; display: block; }
   color: var(--muted);
   transition: all 0.2s;
 }
+/* Black chip — the tab that is selected. */
 .lp-tab.active {
   background: var(--ink);
   color: #fff;
   border-color: var(--ink);
 }
+/* White panel that opens under the selected Features tab. */
 .lp-feature-panel {
   display: none;
   grid-template-columns: 1.1fr 0.9fr;
@@ -1047,12 +1299,16 @@ img { max-width: 100%; display: block; }
   border-radius: var(--radius-xl);
   padding: 1.35rem;
   border: 1px solid var(--line);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
   min-height: 320px;
 }
-.lp-feature-panel.active { display: grid; }
+.lp-feature-panel.active {
+  display: grid;
+}
 @media (max-width: 800px) {
-  .lp-feature-panel { grid-template-columns: 1fr; }
+  .lp-feature-panel {
+    grid-template-columns: 1fr;
+  }
 }
 .lp-feature-copy h3 {
   font-size: 1.6rem;
@@ -1066,7 +1322,11 @@ img { max-width: 100%; display: block; }
   line-height: 1.55;
   margin-bottom: 1rem;
 }
-.lp-bullets { list-style: none; display: grid; gap: 0.55rem; }
+.lp-bullets {
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
 .lp-bullets li {
   display: flex;
   gap: 0.55rem;
@@ -1074,6 +1334,7 @@ img { max-width: 100%; display: block; }
   font-weight: 500;
   font-size: 0.95rem;
 }
+/* Lime dot in front of a bullet in that panel. */
 .lp-bullets li::before {
   content: "";
   width: 10px;
@@ -1083,6 +1344,7 @@ img { max-width: 100%; display: block; }
   background: var(--accent);
   flex-shrink: 0;
 }
+/* Dark picture on the right of a Features tab. */
 .lp-feature-visual {
   background: linear-gradient(160deg, #111, #1f2937);
   border-radius: var(--radius-lg);
@@ -1098,12 +1360,17 @@ img { max-width: 100%; display: block; }
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200,245,66,0.35), transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(200, 245, 66, 0.35),
+    transparent 70%
+  );
   right: -40px;
   top: -40px;
 }
 
 /* testimonials */
+/* Quote cards near the bottom of the home page. */
 .lp-quotes {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -1111,8 +1378,11 @@ img { max-width: 100%; display: block; }
   margin-top: 1.75rem;
 }
 @media (max-width: 800px) {
-  .lp-quotes { grid-template-columns: 1fr; }
+  .lp-quotes {
+    grid-template-columns: 1fr;
+  }
 }
+/* White quote card. */
 .lp-quote {
   background: #fff;
   border-radius: var(--radius-xl);
@@ -1123,6 +1393,7 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
   justify-content: space-between;
 }
+/* Dark quote card. */
 .lp-quote.dark {
   background: var(--card-dark);
   color: #f5f5f5;
@@ -1139,6 +1410,7 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 0.7rem;
 }
+/* Lime circle with the person's initial. */
 .lp-avatar {
   width: 42px;
   height: 42px;
@@ -1149,11 +1421,20 @@ img { max-width: 100%; display: block; }
   place-items: center;
   font-weight: 700;
 }
-.lp-quote .who { font-weight: 600; }
-.lp-quote .role { color: var(--muted); font-size: 0.88rem; font-weight: 500; }
-.lp-quote.dark .role { color: #a1a1aa; }
+.lp-quote .who {
+  font-weight: 600;
+}
+.lp-quote .role {
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+.lp-quote.dark .role {
+  color: #a1a1aa;
+}
 
 /* modules / pricing-like */
+/* Spare module cards. Not on the current home page. */
 .lp-modules {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1161,8 +1442,11 @@ img { max-width: 100%; display: block; }
   margin-top: 1.75rem;
 }
 @media (max-width: 900px) {
-  .lp-modules { grid-template-columns: 1fr; }
+  .lp-modules {
+    grid-template-columns: 1fr;
+  }
 }
+/* White card in that spare module row. */
 .lp-module {
   background: #fff;
   border-radius: var(--radius-xl);
@@ -1173,12 +1457,16 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
   transition: transform 0.35s;
 }
-.lp-module:hover { transform: translateY(-5px); }
+.lp-module:hover {
+  transform: translateY(-5px);
+}
+/* Dark featured module card. */
 .lp-module.featured {
   background: var(--card-dark);
   color: #fff;
   transform: scale(1.02);
 }
+/* Lime tag on a module card. */
 .lp-module .tag {
   align-self: flex-start;
   background: var(--accent);
@@ -1200,7 +1488,9 @@ img { max-width: 100%; display: block; }
   line-height: 1.5;
   flex: 1;
 }
-.lp-module.featured p { color: #a1a1aa; }
+.lp-module.featured p {
+  color: #a1a1aa;
+}
 .lp-module ul {
   list-style: none;
   margin: 1rem 0 1.25rem;
@@ -1209,6 +1499,7 @@ img { max-width: 100%; display: block; }
   font-size: 0.92rem;
   font-weight: 500;
 }
+/* Black button at the bottom of a module card. */
 .lp-module .btn-mod {
   margin-top: auto;
   height: 44px;
@@ -1220,12 +1511,14 @@ img { max-width: 100%; display: block; }
   font-weight: 600;
   cursor: pointer;
 }
+/* Lime button on the dark featured module card. */
 .lp-module.featured .btn-mod {
   background: var(--accent);
   color: #111;
 }
 
 /* final CTA */
+/* Dark band at the bottom: Get started and Sign in. */
 .lp-final {
   margin: 0 clamp(1rem, 3vw, 1.75rem) 1.5rem;
   background: var(--card-dark);
@@ -1241,7 +1534,11 @@ img { max-width: 100%; display: block; }
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200,245,66,0.28), transparent 65%);
+  background: radial-gradient(
+    circle,
+    rgba(200, 245, 66, 0.28),
+    transparent 65%
+  );
   right: -80px;
   top: -120px;
 }
@@ -1277,21 +1574,28 @@ img { max-width: 100%; display: block; }
   font-weight: 600;
   border: 0;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
-.lp-btn:hover { transform: translateY(-2px); }
+.lp-btn:hover {
+  transform: translateY(-2px);
+}
+/* Lime Get started button. */
 .lp-btn-accent {
   background: var(--accent);
   color: #111;
-  box-shadow: 0 12px 30px rgba(200,245,66,0.3);
+  box-shadow: 0 12px 30px rgba(200, 245, 66, 0.3);
 }
+/* Outline Sign in button on the dark band. */
 .lp-btn-ghost {
   background: transparent;
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* footer */
+/* Grey links along the bottom of the home page. */
 .lp-footer {
   padding: 1.5rem clamp(1rem, 3vw, 1.75rem) 2rem;
   display: flex;
@@ -1312,7 +1616,9 @@ img { max-width: 100%; display: block; }
 [data-reveal] {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--d, 0ms);
 }
 [data-reveal].is-in {
@@ -1324,18 +1630,25 @@ img { max-width: 100%; display: block; }
 .lp-float {
   animation: floaty 6s ease-in-out infinite alternate;
 }
-.lp-float.delay { animation-delay: 1.2s; }
+.lp-float.delay {
+  animation-delay: 1.2s;
+}
 @keyframes floaty {
-  from { transform: translateY(0); }
-  to { transform: translateY(-10px); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
 }
 
 /* mobile menu drawer */
+/* Dark overlay when the phone menu is open. */
 .lp-drawer {
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
@@ -1344,6 +1657,7 @@ img { max-width: 100%; display: block; }
   opacity: 1;
   pointer-events: auto;
 }
+/* White menu card on that overlay. */
 .lp-drawer-panel {
   position: absolute;
   top: 0.75rem;
@@ -1355,11 +1669,15 @@ img { max-width: 100%; display: block; }
   transform: translateY(-12px);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.lp-drawer.open .lp-drawer-panel { transform: none; }
+.lp-drawer.open .lp-drawer-panel {
+  transform: none;
+}
 .lp-drawer-panel a {
   display: block;
   padding: 0.85rem 0.4rem;
   font-weight: 600;
   border-bottom: 1px solid var(--line);
 }
-.lp-drawer-panel a:last-child { border-bottom: 0; }
+.lp-drawer-panel a:last-child {
+  border-bottom: 0;
+}

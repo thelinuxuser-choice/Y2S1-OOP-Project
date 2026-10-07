@@ -1,5 +1,6 @@
 /* Shared Slot Availability Map chrome (landing + customer) */
 
+/* Cream panel around the whole live map. Home page and customer portal. */
 .sam-map-shell {
   background: #f6f4ee;
   border-radius: 1.5rem;
@@ -7,6 +8,7 @@
   border: 1px solid rgba(17, 17, 17, 0.08);
 }
 
+/* Top row: LIVE label on the left, clock on the right. */
 .sam-head {
   display: flex;
   justify-content: space-between;
@@ -15,6 +17,7 @@
   flex-wrap: wrap;
   margin-bottom: 1rem;
 }
+/* Green "LIVE" text, top-left of the map. */
 .sam-live {
   display: inline-flex;
   align-items: center;
@@ -24,6 +27,7 @@
   letter-spacing: 0.14em;
   color: #16a34a;
 }
+/* Pulsing green dot beside the LIVE text. */
 .sam-dot {
   width: 8px;
   height: 8px;
@@ -36,23 +40,27 @@
   70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
   100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
+/* "Slot Availability Map" heading. */
 .sam-title {
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-top: 0.25rem;
 }
+/* Grey subtitle under the map heading. */
 .sam-sub {
   color: #6b6b6b;
   font-size: 1.15rem;
   margin-top: 0.2rem;
   font-weight: 500;
 }
+/* Clock, date, and refresh button, top-right of the map. */
 .sam-clock-wrap {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
+/* Big clock time. */
 .sam-clock {
   font-size: 1.85rem;
   font-weight: 800;
@@ -60,12 +68,14 @@
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
+/* Grey date under the clock. */
 .sam-date {
   font-size: 1.05rem;
   color: #6b6b6b;
   text-align: right;
   font-weight: 600;
 }
+/* Lime round refresh button next to the clock. */
 .sam-refresh {
   width: 44px;
   height: 44px;
@@ -86,6 +96,7 @@
   to { transform: rotate(360deg); }
 }
 
+/* Row under the heading: status counts on the left, capacity on the right. */
 .sam-toolbar {
   display: flex;
   justify-content: space-between;
@@ -99,6 +110,7 @@
   flex-wrap: wrap;
   gap: 0.4rem;
 }
+/* White count pills: Reserved, Occupied, Maintenance. */
 .sam-count {
   border: 1px solid rgba(17, 17, 17, 0.1);
   background: #fff;
@@ -110,17 +122,20 @@
   cursor: pointer;
   color: #333;
 }
+/* Lime count pill — the Available count (the selected one). */
 .sam-count.is-lime {
   background: #d4ff00;
   border-color: #d4ff00;
 }
 .sam-count b { font-weight: 800; margin-right: 0.15rem; }
+/* "Capacity" label to the right of the count pills. */
 .sam-cap {
   min-width: 180px;
   font-size: 1.05rem;
   font-weight: 600;
   color: #6b6b6b;
 }
+/* Grey track of the capacity bar. */
 .sam-cap-bar {
   margin-top: 0.35rem;
   height: 8px;
@@ -128,6 +143,7 @@
   background: #e5e4df;
   overflow: hidden;
 }
+/* Green fill inside the capacity bar. */
 .sam-cap-bar i {
   display: block;
   height: 100%;
@@ -137,12 +153,14 @@
   transition: width 0.55s ease;
 }
 
+/* Filter chips: All, Available, Reserved, Occupied, Maintenance. */
 .sam-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
   margin-bottom: 1rem;
 }
+/* Grey filter chip (not selected). */
 .sam-filter {
   border: 0;
   background: #e8e6e0;
@@ -154,11 +172,13 @@
   font-weight: 650;
   cursor: pointer;
 }
+/* Black filter chip — the one that is selected. */
 .sam-filter.active {
   background: #171717;
   color: #fff;
 }
 
+/* Floor list. One floor per row, home page and customer portal. */
 .lp-avail-floors,
 .sam-floors {
   display: grid;
@@ -169,15 +189,18 @@
   .lp-avail-floors,
   .sam-floors { grid-template-columns: 1fr; }
 }
+/* Ground floor block (cream). */
 .lp-avail-floor {
   background: #eceae4;
   border-radius: 1.25rem;
   padding: 0.9rem;
 }
+/* Level 1 block (dark). */
 .lp-avail-floor.dark-floor {
   background: #171717;
   color: #fafafa;
 }
+/* Floor title row, e.g. "GROUND (floor #1)". */
 .sam-floor-head {
   display: flex;
   justify-content: space-between;
@@ -193,6 +216,7 @@
   color: inherit;
   opacity: 0.75;
 }
+/* Green "open" count pill on a floor header. */
 .sam-floor-pill {
   font-size: 0.95rem;
   font-weight: 700;
@@ -201,11 +225,13 @@
   border-radius: 999px;
   padding: 0.35rem 0.75rem;
 }
+/* Same pill on the dark Level 1 header (lime text). */
 .sam-floor-pill.dark {
   background: rgba(255,255,255,0.12);
   color: #d4ff00;
 }
 
+/* Grid of bay tiles inside a floor. */
 .sam-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -215,6 +241,7 @@
   .sam-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* One parking bay tile. */
 .sam-slot {
   border-radius: 1.05rem;
   padding: 0.85rem 0.8rem 0.75rem;
@@ -229,6 +256,7 @@
 }
 .sam-slot.is-hidden { display: none; }
 .sam-slot.is-pickable { cursor: pointer; }
+/* Lime outline on the bay the customer clicked. */
 .sam-slot.selected {
   outline: 3px solid #d4ff00;
   outline-offset: 2px;
@@ -237,6 +265,7 @@
   transform: translateY(-3px);
   box-shadow: 0 14px 28px rgba(0,0,0,0.1);
 }
+/* Round icon in the corner of a bay. */
 .sam-ico {
   width: 26px;
   height: 26px;
@@ -247,11 +276,13 @@
   background: rgba(255,255,255,0.7);
   margin-bottom: 0.25rem;
 }
+/* Bay code, e.g. G-A1. */
 .sam-slot strong {
   font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: 0.02em;
 }
+/* Bay type line under the code. */
 .sam-slot em {
   font-style: normal;
   font-size: 0.85rem;
@@ -259,22 +290,27 @@
   font-weight: 700;
   opacity: 0.85;
 }
+/* Slot id line, e.g. #12. */
 .sam-slot small {
   font-size: 0.9rem;
   opacity: 0.8;
   margin-top: 0.2rem;
   line-height: 1.25;
 }
-.sam-slot.open { background: linear-gradient(165deg, #d9f99d, #bbf7d0); color: #14532d; }
-.sam-slot.reserved { background: linear-gradient(165deg, #fecaca, #fda4af); color: #7f1d1d; }
-.sam-slot.occupied { background: linear-gradient(165deg, #fed7aa, #fdba74); color: #7c2d12; }
-.sam-slot.maint { background: linear-gradient(165deg, #e2e8f0, #cbd5e1); color: #334155; }
+/* Bay colours on the ground floor (cream block). Change background to recolour that status. */
+.sam-slot.open { background: linear-gradient(165deg, #d9f99d, #bbf7d0); color: #14532d; }       /* available / open bay */
+.sam-slot.reserved { background: linear-gradient(165deg, #fecaca, #fda4af); color: #7f1d1d; }   /* reserved bay */
+.sam-slot.occupied { background: linear-gradient(165deg, #fed7aa, #fdba74); color: #7c2d12; }   /* occupied bay */
+.sam-slot.maint { background: linear-gradient(165deg, #e2e8f0, #cbd5e1); color: #334155; }      /* maintenance bay */
 
-.dark-floor .sam-slot.open { background: linear-gradient(165deg, #365314, #3f6212); color: #ecfccb; }
-.dark-floor .sam-slot.reserved { background: linear-gradient(165deg, #7f1d1d, #991b1b); color: #fecaca; }
-.dark-floor .sam-slot.occupied { background: linear-gradient(165deg, #9a3412, #c2410c); color: #ffedd5; }
-.dark-floor .sam-slot.maint { background: linear-gradient(165deg, #334155, #475569); color: #e2e8f0; }
+/* Same bay statuses on Level 1 (the dark floor block). */
+.dark-floor .sam-slot.open { background: linear-gradient(165deg, #365314, #3f6212); color: #ecfccb; }     /* available bay, Level 1 */
+.dark-floor .sam-slot.reserved { background: linear-gradient(165deg, #7f1d1d, #991b1b); color: #fecaca; } /* reserved bay, Level 1 */
+.dark-floor .sam-slot.occupied { background: linear-gradient(165deg, #9a3412, #c2410c); color: #ffedd5; } /* occupied bay, Level 1 */
+.dark-floor .sam-slot.maint { background: linear-gradient(165deg, #334155, #475569); color: #e2e8f0; }    /* maintenance bay, Level 1 */
+/* Bay icon on the dark floor. */
 .dark-floor .sam-ico { background: rgba(0,0,0,0.25); color: #fff; }
 
+/* Map failed to load: LIVE text and the dot turn red. */
 .sam-error .sam-live { color: #b91c1c; }
 .sam-error .sam-dot { background: #ef4444; animation: none; }
