@@ -39,10 +39,12 @@ requireAuth(["MANAGER", "ADMIN"]).then((d) => {
   if (!d) return;
   qs("#who").textContent = d.user.fullName;
   refreshAll();
-  setInterval(refreshAll, 10000);
+  setInterval(refreshLive, 10000);
 });
 
-async function refreshAll() {
+let pinnedCreateFloor = "";
+
+async function refreshLive() {
   try {
     const occ = await API.get("/api/map/occupancy?facilityId=1");
     qs("#occ").innerHTML = Object.entries(occ.counts)
@@ -79,7 +81,14 @@ async function refreshAll() {
           <button class="btn btn-outline btn-sm" onclick="trans(${i.inquiryId},'CLOSE')">Close</button>
         </td>
       </tr>`).join("") || `<tr><td colspan="5">No inquiries</td></tr>`;
+  } catch (e) {
+    showMsg(qs("#msg"), e.message, false);
+  }
+}
 
+async function refreshAll() {
+  await refreshLive();
+  try {
     await loadFloors();
     await loadStrategyKeys();
     await loadRateRules();
@@ -92,17 +101,32 @@ async function refreshAll() {
 
 qs("#btnOcc").onclick = refreshAll;
 
+function keepSelect(el, html, prefer) {
+  if (!el) return;
+  const prev = prefer || el.value;
+  if (el.dataset.opts === html) {
+    if (prev && [...el.options].some((o) => o.value === prev)) el.value = prev;
+    return;
+  }
+  el.innerHTML = html;
+  el.dataset.opts = html;
+  if (prev && [...el.options].some((o) => o.value === prev)) el.value = prev;
+}
+
+const floorPick = qs("#newFloorId");
+if (floorPick) {
+  floorPick.addEventListener("change", () => {
+    pinnedCreateFloor = floorPick.value;
+  });
+}
+
 async function loadFloors() {
   const floors = await API.get("/api/admin/floors?facilityId=1");
   const opts = floors.map((f) =>
     `<option value="${f.floorId}">#${f.floorId} — ${f.floorLabel}</option>`
   ).join("");
-  const createSel = qs("#newFloorId");
-  if (createSel) createSel.innerHTML = opts;
-  const moveSel = qs("#updSlotFloor");
-  if (moveSel) {
-    moveSel.innerHTML = `<option value="">— leave on current floor —</option>` + opts;
-  }
+  keepSelect(qs("#newFloorId"), opts, pinnedCreateFloor);
+  keepSelect(qs("#updSlotFloor"), `<option value="">— leave on current floor —</option>` + opts);
 }
 
 qs("#btnAddFloor").onclick = async () => {
@@ -408,8 +432,12 @@ qs("#btnAddSlot").onclick = async () => {
   try {
     const baseRate = Number(qs("#newSlotRate").value);
     if (Number.isNaN(baseRate) || baseRate < 0) throw new Error("Base rate cannot be negative");
+    const floorSel = qs("#newFloorId");
+    if (pinnedCreateFloor) floorSel.value = pinnedCreateFloor;
+    const floorId = Number(floorSel.value);
+    if (!floorId) throw new Error("Pick a floor");
     const payload = {
-      floorId: Number(qs("#newFloorId").value),
+      floorId,
       slotCode: qs("#newSlotCode").value,
       slotType: qs("#newSlotType").value,
       baseRate
@@ -417,7 +445,10 @@ qs("#btnAddSlot").onclick = async () => {
     const sk = qs("#newSlotStrategyKey").value;
     if (sk) payload.rateStrategyKey = sk;
     const s = await API.post("/api/admin/slots", payload);
-    showMsg(qs("#msg"), "Created slot #" + s.slotId, true);
+    const floorName = floorSel.options[floorSel.selectedIndex]
+      ? floorSel.options[floorSel.selectedIndex].textContent
+      : "floor #" + floorId;
+    showMsg(qs("#msg"), "Created slot #" + s.slotId + " on " + floorName, true);
     refreshAll();
   } catch (e) {
     showMsg(qs("#msg"), e.message, false);

@@ -171,8 +171,28 @@
       .map(function (fid, idx) {
         var floor = byFloor[fid];
         var dark = idx % 2 === 1;
-        var cards = floor.slots
+        var cols = 3;
+        var used = {};
+        var placed = floor.slots.slice().sort(function (a, b) {
+          var ai = (Number(a.posRow) || 0) * cols + (Number(a.posCol) || 0);
+          var bi = (Number(b.posRow) || 0) * cols + (Number(b.posCol) || 0);
+          if (ai !== bi) return ai - bi;
+          return a.slotId - b.slotId;
+        });
+        var cards = placed
           .map(function (s) {
+            var r = Number(s.posRow) || 0;
+            var c = Number(s.posCol) || 0;
+            var key = r + ":" + c;
+            while (used[key]) {
+              c += 1;
+              if (c >= cols) {
+                c = 0;
+                r += 1;
+              }
+              key = r + ":" + c;
+            }
+            used[key] = true;
             var ui = STATUS_UI[s.status] || STATUS_UI.AVAILABLE;
             var sel =
               selectable && self.selectedId === s.slotId ? " selected" : "";
@@ -196,6 +216,10 @@
               s.slotId +
               '" data-floor="' +
               fid +
+              '" style="grid-row:' +
+              (r + 1) +
+              ";grid-column:" +
+              (c + 1) +
               '">' +
               '<span class="sam-ico">' +
               ui.icon +

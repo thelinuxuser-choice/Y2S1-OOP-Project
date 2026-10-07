@@ -106,15 +106,22 @@ public class FacilityAdminService {
         String slotKey = normalizeSlotKey(rateStrategyKey);
         String sql = "INSERT INTO slots (floor_id, slot_code, zone_label, slot_type, status, base_rate, pos_row, pos_col, rate_strategy_key) "
                 + "VALUES (?, ?, ?, ?, 'AVAILABLE', ?, ?, ?, ?)";
-        try (Connection c = DBConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection c = DBConnection.getConnection()) {
+            int placeRow = row;
+            int placeCol = col;
+            if (row == 0 && col == 0) {
+                int[] cell = nextCell(c, floorId);
+                placeRow = cell[0];
+                placeCol = cell[1];
+            }
+            try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, floorId);
             ps.setString(2, code.trim().toUpperCase());
             ps.setString(3, zone);
             ps.setString(4, type == null ? "STANDARD" : type.toUpperCase());
             ps.setBigDecimal(5, rate == null ? new BigDecimal("100.00") : rate);
-            ps.setInt(6, row);
-            ps.setInt(7, col);
+            ps.setInt(6, placeRow);
+            ps.setInt(7, placeCol);
             ps.setString(8, slotKey);
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
@@ -125,9 +132,30 @@ public class FacilityAdminService {
                 m.put("slotCode", code.trim().toUpperCase());
                 return m;
             }
+            }
         } catch (Exception e) {
             throw new RuntimeException("create slot failed: " + e.getMessage(), e);
         }
+    }
+
+    /** Next free bay on this floor. Three columns, same layout as the live map. */
+    private int[] nextCell(Connection c, int floorId) throws SQLException {
+        int cols = 3;
+        int max = -1;
+        String sql = "SELECT pos_row, pos_col FROM slots WHERE floor_id = ?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, floorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int idx = rs.getInt("pos_row") * cols + rs.getInt("pos_col");
+                    if (idx > max) {
+                        max = idx;
+                    }
+                }
+            }
+        }
+        int next = max + 1;
+        return new int[] { next / cols, next % cols };
     }
 
     public boolean updateSlot(int slotId, String type, BigDecimal rate, String status, String zone,

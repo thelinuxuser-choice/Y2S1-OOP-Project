@@ -162,7 +162,7 @@
 .lp-avail-floors,
 .sam-floors {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0.85rem;
 }
 @media (max-width: 900px) {
@@ -208,7 +208,7 @@
 
 .sam-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.55rem;
 }
 @media (max-width: 700px) {

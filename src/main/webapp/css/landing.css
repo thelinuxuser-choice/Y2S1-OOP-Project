@@ -679,7 +679,7 @@ img { max-width: 100%; display: block; }
 
 .sam-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.55rem;
 }
 @media (max-width: 700px) {
@@ -770,7 +770,7 @@ img { max-width: 100%; display: block; }
 }
 .lp-avail-floors {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0.9rem;
 }
 @media (max-width: 800px) {
